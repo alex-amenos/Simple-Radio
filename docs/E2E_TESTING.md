@@ -538,7 +538,7 @@ adb -s <device-serial> shell
 Create a test application class:
 
 ```kotlin
-class TestJetpackApplication : JetpackApplication() {
+class TestSimpleRadioApp : SimpleRadioApp() {
     override fun onCreate() {
         super.onCreate()
         // Override Koin modules with test implementations
