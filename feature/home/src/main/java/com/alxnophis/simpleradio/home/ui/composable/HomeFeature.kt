@@ -17,6 +17,7 @@ fun HomeFeature(
     searchContent: @Composable () -> Unit,
     settingsContent: @Composable () -> Unit,
     onBack: () -> Unit,
+    miniPlayerContent: @Composable () -> Unit = {},
 ) {
     val viewModel = koinViewModel<HomeViewModel>()
     val uiState: HomeUiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -27,5 +28,6 @@ fun HomeFeature(
         searchContent = searchContent,
         settingsContent = settingsContent,
         onBack = onBack,
+        miniPlayerContent = miniPlayerContent,
     )
 }

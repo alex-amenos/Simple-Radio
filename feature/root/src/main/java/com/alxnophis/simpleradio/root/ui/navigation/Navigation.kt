@@ -22,6 +22,7 @@ import androidx.navigation3.ui.NavDisplay
 import com.alxnophis.simpleradio.favorites.ui.composable.FavoritesFeature
 import com.alxnophis.simpleradio.home.ui.composable.HomeFeature
 import com.alxnophis.simpleradio.radioplayer.playback.RadioPlayback
+import com.alxnophis.simpleradio.radioplayer.ui.composable.RadioPlayerBarFeature
 import com.alxnophis.simpleradio.radioplayer.ui.composable.RadioPlayerFeature
 import com.alxnophis.simpleradio.search.ui.composable.SearchFeature
 import com.alxnophis.simpleradio.settings.ui.navigation.SettingsFeature
@@ -96,6 +97,7 @@ fun Navigation(
                         searchContent = { SearchFeature(onStationSelected = ::playStations) },
                         settingsContent = { SettingsFeature() },
                         onBack = onBack,
+                        miniPlayerContent = { RadioPlayerBarFeature(onOpenPlayer = ::showRadioPlayer) },
                     )
                 }
                 entry<Route.RadioPlayer> {
