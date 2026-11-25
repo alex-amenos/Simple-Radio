@@ -3,13 +3,27 @@
 package com.alxnophis.jetpack.home.ui.contract
 
 import androidx.compose.runtime.Immutable
+import arrow.optics.optics
+import com.alxnophis.jetpack.core.ui.viewmodel.UiEvent
 import com.alxnophis.jetpack.core.ui.viewmodel.UiState
-import com.alxnophis.jetpack.home.domain.model.NavigationItem
-import com.alxnophis.jetpack.home.domain.usecase.GetNavigationItemsUseCase
 
 @Immutable
+internal enum class HomeTab {
+    Favorites,
+    Search,
+    Settings,
+}
+
+internal sealed interface HomeEvent : UiEvent {
+    data class SelectTab(
+        val tab: HomeTab,
+    ) : HomeEvent
+}
+
+@optics
+@Immutable
 internal data class HomeUiState(
-    val navigationItems: List<NavigationItem> = GetNavigationItemsUseCase.defaultNavigationItems,
+    val selectedTab: HomeTab = HomeTab.Favorites,
 ) : UiState {
     internal companion object {
         val initialState = HomeUiState()
