@@ -5,6 +5,6 @@
         <item name="windowSplashScreenBackground">@android:color/black</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground_night</item>
         <item name="windowSplashScreenIconBackgroundColor">#191C1A</item>
-        <item name="postSplashScreenTheme">@style/CoreTheme</item>
+        <item name="postSplashScreenTheme">@style/Theme.App.PostSplash</item>
     </style>
 </resources>
