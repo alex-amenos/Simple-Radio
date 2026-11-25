@@ -15,7 +15,7 @@ import org.koin.androidx.compose.koinViewModel
 fun HomeFeature(
     favoritesContent: @Composable () -> Unit,
     searchContent: @Composable () -> Unit,
-    settingsContent: @Composable (onBack: () -> Unit) -> Unit,
+    settingsContent: @Composable () -> Unit,
     onBack: () -> Unit,
 ) {
     val viewModel = koinViewModel<HomeViewModel>()
