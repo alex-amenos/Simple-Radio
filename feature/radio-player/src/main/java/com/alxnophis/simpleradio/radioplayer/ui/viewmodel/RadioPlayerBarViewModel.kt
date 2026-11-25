@@ -50,7 +50,7 @@ internal class RadioPlayerBarViewModel(
     }
 
     private fun RadioPlayerSnapshot.toUiState(): RadioPlayerBarUiState {
-        val hasStation = !stationName.isNullOrBlank()
+        val hasStation = stationId != null || !stationName.isNullOrBlank()
         val isVisible = hasStation && status != RadioPlaybackStatus.Idle
         return RadioPlayerBarUiState(
             isVisible = isVisible,
