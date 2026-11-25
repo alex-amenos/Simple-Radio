@@ -1,5 +1,6 @@
 package com.alxnophis.jetpack.search.ui
 
+import androidx.lifecycle.SavedStateHandle
 import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
@@ -12,7 +13,9 @@ import com.alxnophis.jetpack.search.domain.usecase.SearchStationsUseCase
 import com.alxnophis.jetpack.search.domain.usecase.SetStationFavoriteUseCase
 import com.alxnophis.jetpack.search.ui.contract.SearchEvent
 import com.alxnophis.jetpack.search.ui.contract.SearchStatus
+import com.alxnophis.jetpack.search.ui.viewmodel.KEY_SEARCH_REQUEST
 import com.alxnophis.jetpack.search.ui.viewmodel.SEARCH_DEBOUNCE_MILLIS
+import com.alxnophis.jetpack.search.ui.viewmodel.SearchRequest
 import com.alxnophis.jetpack.search.ui.viewmodel.SearchViewModel
 import com.alxnophis.jetpack.storage.favorites.model.FavoriteStation
 import com.alxnophis.jetpack.storage.favorites.repository.FavoriteStationsRepository
@@ -21,6 +24,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
@@ -36,11 +41,11 @@ internal class SearchViewModelUnitTests : BaseViewModelUnitTest() {
             searchRepository.stations = listOf(station("1")).right()
             searchRepository.countries = listOf(Country("ES", "Spain")).right()
 
-            val viewModel = viewModelMother()
+            val viewModel = viewModelMother().subscribed(this)
             testScheduler.advanceUntilIdle()
 
-            viewModel.currentUiState.status shouldBeEqualTo SearchStatus.Content
-            viewModel.currentUiState.countries shouldBeEqualTo listOf(Country("ES", "Spain"))
+            viewModel.uiState.value.status shouldBeEqualTo SearchStatus.Content
+            viewModel.uiState.value.countries shouldBeEqualTo listOf(Country("ES", "Spain"))
         }
 
     @Test
@@ -48,31 +53,31 @@ internal class SearchViewModelUnitTests : BaseViewModelUnitTest() {
         runTest {
             searchRepository.stations = emptyList<FavoriteStation>().right()
 
-            val viewModel = viewModelMother()
+            val viewModel = viewModelMother().subscribed(this)
             testScheduler.advanceUntilIdle()
 
-            viewModel.currentUiState.status shouldBeEqualTo SearchStatus.Empty
+            viewModel.uiState.value.status shouldBeEqualTo SearchStatus.Empty
         }
 
     @Test
     fun `GIVEN a failing search WHEN retrying after recovery THEN content is shown`() =
         runTest {
             searchRepository.stations = SearchError.ServerError.left()
-            val viewModel = viewModelMother()
+            val viewModel = viewModelMother().subscribed(this)
             testScheduler.advanceUntilIdle()
-            viewModel.currentUiState.status shouldBeEqualTo SearchStatus.Error
+            viewModel.uiState.value.status shouldBeEqualTo SearchStatus.Error
 
             searchRepository.stations = listOf(station("1")).right()
             viewModel.handleEvent(SearchEvent.Retry)
             testScheduler.advanceUntilIdle()
 
-            viewModel.currentUiState.status shouldBeEqualTo SearchStatus.Content
+            viewModel.uiState.value.status shouldBeEqualTo SearchStatus.Content
         }
 
     @Test
     fun `GIVEN typing fast WHEN query changes THEN only the last query is searched after the debounce`() =
         runTest {
-            val viewModel = viewModelMother()
+            val viewModel = viewModelMother().subscribed(this)
             testScheduler.advanceUntilIdle()
             searchRepository.queries.clear()
 
@@ -87,7 +92,7 @@ internal class SearchViewModelUnitTests : BaseViewModelUnitTest() {
     @Test
     fun `GIVEN a country WHEN selected THEN search runs immediately with its code`() =
         runTest {
-            val viewModel = viewModelMother()
+            val viewModel = viewModelMother().subscribed(this)
             testScheduler.advanceUntilIdle()
             searchRepository.queries.clear()
 
@@ -101,25 +106,79 @@ internal class SearchViewModelUnitTests : BaseViewModelUnitTest() {
     fun `GIVEN a station WHEN toggled twice THEN it is added and then removed from favorites`() =
         runTest {
             val station = station("1")
-            val viewModel = viewModelMother()
+            val viewModel = viewModelMother().subscribed(this)
             testScheduler.advanceUntilIdle()
 
             viewModel.handleEvent(SearchEvent.ToggleFavorite(station))
             testScheduler.advanceUntilIdle()
-            viewModel.currentUiState.favoriteIds shouldBeEqualTo setOf("1")
+            viewModel.uiState.value.favoriteIds shouldBeEqualTo setOf("1")
 
             viewModel.handleEvent(SearchEvent.ToggleFavorite(station))
             testScheduler.advanceUntilIdle()
-            viewModel.currentUiState.favoriteIds shouldBeEqualTo emptySet<String>()
+            viewModel.uiState.value.favoriteIds shouldBeEqualTo emptySet<String>()
         }
 
-    private fun viewModelMother() =
+    @Test
+    fun `GIVEN a saved request WHEN view model is recreated THEN query and country are restored and searched`() =
+        runTest {
+            val savedState = SavedStateHandle(mapOf(KEY_SEARCH_REQUEST to SearchRequest(query = "jazz", country = Country("ES", "Spain"))))
+
+            val viewModel = viewModelMother(savedState).subscribed(this)
+            testScheduler.advanceUntilIdle()
+
+            viewModel.uiState.value.query shouldBeEqualTo "jazz"
+            viewModel.uiState.value.selectedCountry shouldBeEqualTo Country("ES", "Spain")
+            searchRepository.queries shouldBeEqualTo listOf<Pair<String, String?>>("jazz" to "ES")
+        }
+
+    @Test
+    fun `GIVEN a query and a country WHEN changed THEN they are saved in the saved state handle`() =
+        runTest {
+            val savedState = SavedStateHandle()
+            val viewModel = viewModelMother(savedState).subscribed(this)
+
+            viewModel.handleEvent(SearchEvent.QueryChanged("rock"))
+            viewModel.handleEvent(SearchEvent.CountrySelected(Country("ES", "Spain")))
+
+            val saved = savedState.get<SearchRequest>(KEY_SEARCH_REQUEST)
+            saved?.query shouldBeEqualTo "rock"
+            saved?.country shouldBeEqualTo Country("ES", "Spain")
+        }
+
+    @Test
+    fun `GIVEN countries already loaded WHEN retrying THEN countries are not requested again`() =
+        runTest {
+            searchRepository.countries = listOf(Country("ES", "Spain")).right()
+            val viewModel = viewModelMother().subscribed(this)
+            testScheduler.advanceUntilIdle()
+
+            viewModel.handleEvent(SearchEvent.Retry)
+            testScheduler.advanceUntilIdle()
+
+            searchRepository.countriesRequests shouldBeEqualTo 1
+        }
+
+    @Test
+    fun `GIVEN no subscribers WHEN view model is created THEN nothing is searched`() =
+        runTest {
+            viewModelMother()
+            testScheduler.advanceUntilIdle()
+
+            searchRepository.queries shouldBeEqualTo emptyList<Pair<String, String?>>()
+        }
+
+    private fun viewModelMother(savedStateHandle: SavedStateHandle = SavedStateHandle()) =
         SearchViewModel(
             getCountries = GetCountriesUseCase(searchRepository),
             searchStations = SearchStationsUseCase(searchRepository),
             observeFavoriteIds = ObserveFavoriteIdsUseCase(favoritesRepository),
             setStationFavorite = SetStationFavoriteUseCase(favoritesRepository),
+            savedStateHandle = savedStateHandle,
         )
+
+    // uiState is shared Lazily, so the UI collector is simulated to start it.
+    private fun SearchViewModel.subscribed(testScope: TestScope): SearchViewModel =
+        apply { testScope.backgroundScope.launch { uiState.collect {} } }
 
     private fun station(id: String) = FavoriteStation(id, "Station $id", "https://example.com/$id", null, "MP3", 128, "Spain")
 
@@ -128,7 +187,12 @@ internal class SearchViewModelUnitTests : BaseViewModelUnitTest() {
         var stations: Either<SearchError, List<FavoriteStation>> = emptyList<FavoriteStation>().right()
         val queries = mutableListOf<Pair<String, String?>>()
 
-        override suspend fun getCountries() = countries
+        var countriesRequests = 0
+
+        override suspend fun getCountries(): Either<SearchError, List<Country>> {
+            countriesRequests++
+            return countries
+        }
 
         override suspend fun searchStations(
             name: String,
