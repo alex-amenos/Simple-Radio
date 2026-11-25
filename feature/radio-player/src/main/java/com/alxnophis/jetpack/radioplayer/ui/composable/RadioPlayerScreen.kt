@@ -68,6 +68,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.alxnophis.jetpack.core.ui.composable.CoreStationIcon
 import com.alxnophis.jetpack.core.ui.theme.AppTheme
 import com.alxnophis.jetpack.radioplayer.R
 import com.alxnophis.jetpack.radioplayer.playback.RadioPlaybackStatus
@@ -206,7 +207,7 @@ private fun PlayerInfo(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
     ) {
-        RadioStationIcon(faviconUrl = uiState.artworkUri, size = iconSize)
+        CoreStationIcon(faviconUrl = uiState.artworkUri, size = iconSize)
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center,
