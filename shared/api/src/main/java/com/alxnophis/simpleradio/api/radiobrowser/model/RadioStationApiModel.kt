@@ -1,0 +1,15 @@
+package com.alxnophis.simpleradio.api.radiobrowser.model
+
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class RadioStationApiModel(
+    @SerialName("stationuuid") val stationUuid: String,
+    @SerialName("name") val name: String,
+    @SerialName("url_resolved") val urlResolved: String? = null,
+    @SerialName("favicon") val favicon: String? = null,
+    @SerialName("codec") val codec: String? = null,
+    @SerialName("bitrate") val bitrate: Int? = null,
+    @SerialName("country") val country: String? = null,
+)

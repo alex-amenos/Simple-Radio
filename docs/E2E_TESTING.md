@@ -1,6 +1,6 @@
 # End-to-End Testing Guide
 
-This document describes how to run and write end-to-end (E2E) tests for the Jetpack application.
+This document describes how to run and write end-to-end (E2E) tests for the Simple Radio application.
 
 ## Overview
 
@@ -26,7 +26,7 @@ This approach ensures:
 ## Test Structure
 
 ```
-app/src/androidTest/java/com/alxnophis/jetpack/
+app/src/androidTest/java/com/alxnophis/simpleradio/
 ├── e2e/
 │   └── PostsJourneyRobotTest.kt         # ⭐ E2E with Robot pattern (recommended)
 ├── robot/
@@ -73,7 +73,7 @@ open app/build/reports/androidTests/connected/debug/index.html
 
 ```bash
 # Run PostsJourneyRobotTest (recommended)
-./gradlew :app:connectedDebugAndroidTest --tests "com.alxnophis.jetpack.e2e.PostsJourneyRobotTest"
+./gradlew :app:connectedDebugAndroidTest --tests "com.alxnophis.simpleradio.e2e.PostsJourneyRobotTest"
 ```
 
 ### Run Single Test Method
@@ -81,14 +81,14 @@ open app/build/reports/androidTests/connected/debug/index.html
 ```bash
 # Run specific test
 ./gradlew :app:connectedDebugAndroidTest \
-  --tests "com.alxnophis.jetpack.e2e.PostsJourneyRobotTest.GIVEN_app_launches_WHEN_navigate_to_posts_THEN_posts_are_displayed"
+  --tests "com.alxnophis.simpleradio.e2e.PostsJourneyRobotTest.GIVEN_app_launches_WHEN_navigate_to_posts_THEN_posts_are_displayed"
 ```
 
 ### Run with adb
 
 ```bash
 # Run instrumentation tests directly with adb
-adb shell am instrument -w com.alxnophis.jetpack.test/androidx.test.runner.AndroidJUnitRunner
+adb shell am instrument -w com.alxnophis.simpleradio.test/androidx.test.runner.AndroidJUnitRunner
 ```
 
 ## Test Patterns
@@ -109,7 +109,7 @@ The **Screen Robot Pattern** (also known as Page Object Model) is the recommende
 Test Class → Screen Robot → Compose Test API → Production UI
 ```
 
-Located in `app/src/androidTest/java/com/alxnophis/jetpack/`:
+Located in `app/src/androidTest/java/com/alxnophis/simpleradio/`:
 
 ```kotlin
 // PostsJourneyRobotTest.kt - E2E test with Robot pattern
@@ -224,15 +224,15 @@ composeTestRule
 
 ### 1. Create Your Test in `:app` Module
 
-E2E tests should live in `app/src/androidTest/java/com/alxnophis/jetpack/e2e/`:
+E2E tests should live in `app/src/androidTest/java/com/alxnophis/simpleradio/e2e/`:
 
 ```kotlin
-package com.alxnophis.jetpack.e2e
+package com.alxnophis.simpleradio.e2e
 
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.alxnophis.jetpack.robot.homeScreen
-import com.alxnophis.jetpack.root.ui.RootActivity
+import com.alxnophis.simpleradio.robot.homeScreen
+import com.alxnophis.simpleradio.root.ui.RootActivity
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -255,17 +255,17 @@ class YourFeatureJourneyTest {
 
 ### 2. Create Screen Robot
 
-Create a new robot in `app/src/androidTest/java/com/alxnophis/jetpack/robot/`:
+Create a new robot in `app/src/androidTest/java/com/alxnophis/simpleradio/robot/`:
 
 ```kotlin
-package com.alxnophis.jetpack.robot
+package com.alxnophis.simpleradio.robot
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
-import com.alxnophis.jetpack.core.ui.composable.CoreTags
+import com.alxnophis.simpleradio.core.ui.composable.CoreTags
 
 /**
  * Screen Robot for Your Feature Screen
@@ -321,7 +321,7 @@ fun ComposeTestRule.yourFeatureScreen(): YourFeatureScreenRobot =
 In your feature's composable (e.g., `feature/yourfeature/src/main/java/.../YourFeatureScreen.kt`):
 
 ```kotlin
-import com.alxnophis.jetpack.core.ui.composable.CoreTags
+import com.alxnophis.simpleradio.core.ui.composable.CoreTags
 
 @Composable
 internal fun YourFeatureScreen() {
@@ -538,7 +538,7 @@ adb -s <device-serial> shell
 Create a test application class:
 
 ```kotlin
-class TestJetpackApplication : JetpackApplication() {
+class TestSimpleRadioApp : SimpleRadioApp() {
     override fun onCreate() {
         super.onCreate()
         // Override Koin modules with test implementations

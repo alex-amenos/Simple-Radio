@@ -12,15 +12,15 @@ kover {
     reports {
         filters {
             includes {
-                classes('com.alxnophis.jetpack.*')
+                classes('com.alxnophis.simpleradio.*')
             }
             excludes {
                 classes(
-                        'com.alxnophis.jetpack.core.base.*',
-                        'com.alxnophis.jetpack.*.di.*',
-                        'com.alxnophis.jetpack.di.*',
-                        'com.alxnophis.jetpack.router.*',
-                        'com.alxnophis.jetpack.*.ui.navigation.*',
+                        'com.alxnophis.simpleradio.core.base.*',
+                        'com.alxnophis.simpleradio.*.di.*',
+                        'com.alxnophis.simpleradio.di.*',
+                        'com.alxnophis.simpleradio.router.*',
+                        'com.alxnophis.simpleradio.*.ui.navigation.*',
                         '*Activity',
                         'BuildConfig',
                         '*Mother',

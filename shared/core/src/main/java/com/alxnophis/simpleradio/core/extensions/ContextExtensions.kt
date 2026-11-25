@@ -1,0 +1,68 @@
+package com.alxnophis.simpleradio.core.extensions
+
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
+import com.alxnophis.simpleradio.core.base.constants.EMPTY
+import com.alxnophis.simpleradio.kotlin.constants.ZERO_INT
+
+fun Context.getVersionName(): String =
+    try {
+        val packageInfo: PackageInfo =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                packageManager.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0))
+            } else {
+                packageManager.getPackageInfo(packageName, ZERO_INT)
+            }
+        packageInfo.versionName ?: EMPTY
+    } catch (e: PackageManager.NameNotFoundException) {
+        e.printStackTrace()
+        EMPTY
+    }
+
+fun Context.getVersion(): String = StringBuilder().append(this.getVersionName()).toString()
+
+fun Context.showNotification(
+    @StringRes titleResId: Int,
+    @StringRes contentResId: Int,
+    @DrawableRes icon: Int,
+    channelId: String,
+    notificationId: Int,
+    vibratePattern: LongArray = longArrayOf(1000),
+    visibility: Int = NotificationCompat.VISIBILITY_PRIVATE,
+    priority: Int = NotificationCompat.PRIORITY_DEFAULT,
+    category: String = NotificationCompat.CATEGORY_MESSAGE,
+    contentIntent: PendingIntent? = null,
+) {
+    val notificationManage = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    val notification =
+        NotificationCompat
+            .Builder(applicationContext, channelId)
+            .setContentTitle(getString(titleResId))
+            .setContentText(getString(contentResId))
+            .setSmallIcon(icon)
+            .setVisibility(visibility)
+            .setPriority(priority)
+            .setCategory(category)
+            .setContentIntent(contentIntent)
+            .setVibrate(vibratePattern)
+            .build()
+    notificationManage.notify(notificationId, notification)
+}
+
+private const val ROOT_ACTIVITY = "com.alxnophis.simpleradio.root.ui.RootActivity"
+
+fun Context.appPendingIntent(): PendingIntent {
+    val intent = Intent().setClassName(this, ROOT_ACTIVITY).apply { flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK }
+    return PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+}
+
+fun Context.hasPermission(permission: String): Boolean = ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED

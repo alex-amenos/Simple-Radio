@@ -2,4 +2,4 @@
 #json_key_file("")
 
 # Package
-package_name("com.alxnophis.jetpack")
+package_name("com.alxnophis.simpleradio")

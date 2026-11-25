@@ -2,7 +2,7 @@ apply from: "$rootDir/buildSystem/gradle/common-android-feature.gradle"
 
 android {
     resourcePrefix = 'radioplayer'
-    namespace = 'com.alxnophis.jetpack.radioplayer'
+    namespace = 'com.alxnophis.simpleradio.radioplayer'
 }
 
 dependencies {

@@ -1,7 +1,7 @@
 apply from: "$rootDir/buildSystem/gradle/common-android-shared.gradle"
 
 android {
-    namespace = 'com.alxnophis.jetpack.storage'
+    namespace = 'com.alxnophis.simpleradio.storage'
 }
 
 ksp {

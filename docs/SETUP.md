@@ -59,7 +59,7 @@ Alternatively, install and launch the debug app on a running emulator or connect
 ./gradlew :app:installDebug
 ```
 
-The debug application ID is `com.alxnophis.jetpack.debug`.
+The debug application ID is `com.alxnophis.simpleradio.debug`.
 
 ## Useful checks
 

@@ -1,0 +1,28 @@
+package com.alxnophis.simpleradio.api.jsonplaceholder.model
+
+import arrow.retrofit.adapter.either.networkhandling.HttpError
+import arrow.retrofit.adapter.either.networkhandling.IOError
+import arrow.retrofit.adapter.either.networkhandling.UnexpectedCallError
+import com.alxnophis.simpleradio.api.exception.NoConnectivityException
+import com.alxnophis.simpleradio.kotlin.constants.EMPTY
+import org.jetbrains.annotations.TestOnly
+import java.io.IOException
+
+@TestOnly
+object CallErrorMother {
+    fun ioError(cause: IOException = IOException()) = IOError(cause = cause)
+
+    fun noConnectivityError() = IOError(cause = NoConnectivityException())
+
+    fun httpError(
+        code: Int,
+        message: String = EMPTY,
+        body: String = EMPTY,
+    ) = HttpError(
+        code = code,
+        message = message,
+        body = body,
+    )
+
+    fun unexpectedCallError(cause: Throwable = Throwable()) = UnexpectedCallError(cause = cause)
+}

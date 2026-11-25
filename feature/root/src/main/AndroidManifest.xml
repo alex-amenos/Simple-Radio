@@ -19,7 +19,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="jetpackproject"
+                    android:host="simpleradio"
                     android:scheme="app" />
             </intent-filter>
         </activity>

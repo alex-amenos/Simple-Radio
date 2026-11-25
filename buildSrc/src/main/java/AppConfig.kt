@@ -1,6 +1,6 @@
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object AppConfig {
-    const val APPLICATION_ID = "com.alxnophis.jetpack"
+    const val APPLICATION_ID = "com.alxnophis.simpleradio"
     const val APP_PACKAGE_NAME = APPLICATION_ID
     const val APP_PACKAGE_NAME_DEBUG = "$APPLICATION_ID.debug"
     const val COMPILE_SDK_VERSION = 37
