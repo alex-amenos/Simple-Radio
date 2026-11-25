@@ -1,6 +1,5 @@
 package com.alxnophis.simpleradio.countryselector.ui.composable
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -38,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -82,7 +84,8 @@ internal fun CountrySelectorScreen(
             modifier =
                 Modifier
                     .padding(innerPadding)
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .selectableGroup(),
         ) {
             OutlinedTextField(
                 value = uiState.query,
@@ -110,6 +113,17 @@ internal fun CountrySelectorScreen(
                 },
                 singleLine = true,
             )
+
+            if (uiState.query.isBlank()) {
+                CountryRow(
+                    name = stringResource(R.string.country_selector_all_countries),
+                    code = null,
+                    isSelected = uiState.selectedCountryCode == null,
+                    onClick = { onCountrySelected(null) },
+                    modifier = Modifier.testTag(CountrySelectorTags.TAG_ALL_COUNTRIES),
+                )
+                HorizontalDivider()
+            }
 
             Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
                 when (uiState.status) {
@@ -146,18 +160,6 @@ internal fun CountrySelectorScreen(
 
                     CountrySelectorStatus.Content -> {
                         LazyColumn(modifier = Modifier.fillMaxSize()) {
-                            if (uiState.query.isBlank()) {
-                                item(key = "all_countries", contentType = "special") {
-                                    CountryRow(
-                                        name = stringResource(R.string.country_selector_all_countries),
-                                        code = null,
-                                        isSelected = uiState.selectedCountryCode == null,
-                                        onClick = { onCountrySelected(null) },
-                                        modifier = Modifier.testTag(CountrySelectorTags.TAG_ALL_COUNTRIES),
-                                    )
-                                    HorizontalDivider()
-                                }
-                            }
                             items(
                                 items = uiState.countries,
                                 key = { it.code },
@@ -192,7 +194,7 @@ private fun CountryRow(
         modifier =
             modifier
                 .fillMaxWidth()
-                .clickable(onClick = onClick)
+                .selectable(selected = isSelected, role = Role.RadioButton, onClick = onClick)
                 .padding(horizontal = mediumPadding, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {

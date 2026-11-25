@@ -15,11 +15,13 @@ fun SearchFeature(
     onSelectCountry: (currentCountryCode: String?) -> Unit = {},
     selectedCountry: Country? = null,
     hasNewCountrySelection: Boolean = false,
+    onCountrySelectionConsumed: () -> Unit = {},
 ) {
     val viewModel = koinViewModel<SearchViewModel>()
     LaunchedEffect(hasNewCountrySelection, selectedCountry) {
         if (hasNewCountrySelection) {
             viewModel.handleEvent(SearchEvent.CountrySelected(selectedCountry))
+            onCountrySelectionConsumed()
         }
     }
     SearchScreen(

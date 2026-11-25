@@ -13,6 +13,7 @@ fun SettingsFeature(
     onSelectCountry: (currentCountryCode: String?) -> Unit = {},
     selectedCountry: Pair<String?, String?>? = null,
     hasNewCountrySelection: Boolean = false,
+    onCountrySelectionConsumed: () -> Unit = {},
 ) {
     val viewModel = koinViewModel<SettingsViewModel>()
     LaunchedEffect(hasNewCountrySelection, selectedCountry) {
@@ -23,6 +24,7 @@ fun SettingsFeature(
                     countryName = selectedCountry?.second,
                 ),
             )
+            onCountrySelectionConsumed()
         }
     }
     SettingsScreen(
