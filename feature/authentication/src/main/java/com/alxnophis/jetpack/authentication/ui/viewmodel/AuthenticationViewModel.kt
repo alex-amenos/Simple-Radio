@@ -1,0 +1,159 @@
+package com.alxnophis.jetpack.authentication.ui.viewmodel
+
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import arrow.core.Either
+import com.alxnophis.jetpack.authentication.R
+import com.alxnophis.jetpack.authentication.domain.model.AuthenticationError
+import com.alxnophis.jetpack.authentication.domain.usecase.AuthenticateUseCase
+import com.alxnophis.jetpack.authentication.domain.usecase.AuthenticateUseCase.Companion.AUTHORIZED_EMAIL
+import com.alxnophis.jetpack.authentication.domain.usecase.AuthenticateUseCase.Companion.AUTHORIZED_PASSWORD
+import com.alxnophis.jetpack.authentication.ui.contract.AuthenticationEvent
+import com.alxnophis.jetpack.authentication.ui.contract.AuthenticationMode
+import com.alxnophis.jetpack.authentication.ui.contract.AuthenticationState
+import com.alxnophis.jetpack.authentication.ui.contract.AuthenticationUiError
+import com.alxnophis.jetpack.authentication.ui.contract.PasswordRequirements
+import com.alxnophis.jetpack.core.ui.viewmodel.BaseViewModel
+import com.alxnophis.jetpack.kotlin.constants.EMPTY
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
+internal class AuthenticationViewModel(
+    private val authenticateUseCase: AuthenticateUseCase,
+    savedStateHandle: SavedStateHandle,
+    initialUiState: AuthenticationState = AuthenticationState.initialState,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+) : BaseViewModel<AuthenticationEvent, AuthenticationState>(initialUiState, savedStateHandle) {
+    /**
+     * Never persist the password field — clear it before writing to SavedStateHandle
+     * so that sensitive credentials are not stored across process recreation.
+     */
+    override fun sanitizeForSavedState(state: AuthenticationState): AuthenticationState =
+        state.copy(password = EMPTY, passwordRequirements = persistentListOf(), isLoading = false)
+
+    override fun handleEvent(event: AuthenticationEvent) {
+        viewModelScope.launch {
+            when (event) {
+                AuthenticationEvent.Authenticated -> authenticate()
+                is AuthenticationEvent.ErrorDismissRequested -> dismissError(event.errorId)
+                AuthenticationEvent.ToggleAuthenticationModeRequested -> toggleAuthenticationMode()
+                AuthenticationEvent.SetUserNotAuthorized -> setUserNotAuthorized()
+                AuthenticationEvent.AutoCompleteAuthorizationRequested -> autoCompleteAuthorization()
+                is AuthenticationEvent.EmailChanged -> updateEmail(event.email)
+                is AuthenticationEvent.PasswordChanged -> updatePassword(event.password)
+            }
+        }
+    }
+
+    private fun updateEmail(email: String) {
+        viewModelScope.launch {
+            updateUiState {
+                copy(email = email)
+            }
+        }
+    }
+
+    private fun updatePassword(newPassword: String) {
+        viewModelScope.launch {
+            val requirements = mutableListOf<PasswordRequirements>()
+            if (newPassword.length >= MIN_PASSWORD_LENGTH) {
+                requirements.add(PasswordRequirements.EIGHT_CHARACTERS)
+            }
+            if (newPassword.any { it.isUpperCase() }) {
+                requirements.add(PasswordRequirements.CAPITAL_LETTER)
+            }
+            if (newPassword.any { it.isDigit() }) {
+                requirements.add(PasswordRequirements.NUMBER)
+            }
+            updateUiState {
+                copy(
+                    password = newPassword,
+                    passwordRequirements = requirements.toImmutableList(),
+                )
+            }
+        }
+    }
+
+    private fun authenticate() {
+        viewModelScope.launch {
+            updateUiState {
+                copy(isLoading = true)
+            }
+            authenticateUser(currentUiState.email, currentUiState.password).fold(
+                {
+                    updateUiState {
+                        copy(
+                            isLoading = false,
+                            error = AuthenticationUiError(messageRes = R.string.authentication_auth_error),
+                        )
+                    }
+                },
+                {
+                    updateUiState {
+                        copy(
+                            isLoading = false,
+                            isUserAuthorized = true,
+                        )
+                    }
+                },
+            )
+        }
+    }
+
+    private fun dismissError(errorId: Long) {
+        if (currentUiState.error?.id == errorId) {
+            updateUiState {
+                copy(error = null)
+            }
+        }
+    }
+
+    private fun toggleAuthenticationMode() {
+        val newAuthenticationMode =
+            when (currentUiState.authenticationMode) {
+                AuthenticationMode.SIGN_IN -> AuthenticationMode.SIGN_UP
+                else -> AuthenticationMode.SIGN_IN
+            }
+        updateUiState {
+            copy(
+                authenticationMode = newAuthenticationMode,
+                email = EMPTY,
+                password = EMPTY,
+            )
+        }
+    }
+
+    private fun setUserNotAuthorized() {
+        viewModelScope.launch {
+            updateUiState {
+                copy(isUserAuthorized = false)
+            }
+        }
+    }
+
+    private fun autoCompleteAuthorization() {
+        viewModelScope.launch {
+            updateUiState {
+                copy(
+                    email = AUTHORIZED_EMAIL,
+                    password = AUTHORIZED_PASSWORD,
+                )
+            }
+        }
+    }
+
+    private suspend fun authenticateUser(
+        email: String,
+        password: String,
+    ): Either<AuthenticationError, Unit> =
+        context(ioDispatcher) {
+            authenticateUseCase(email, password)
+        }
+
+    companion object {
+        private const val MIN_PASSWORD_LENGTH = 8
+    }
+}

@@ -1,0 +1,42 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+        maven { url = 'https://jitpack.io' }
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven { url = 'https://jitpack.io' }
+    }
+}
+
+rootProject.name = "Jetpack"
+
+// App modules
+include ":app"
+
+// Shared modules
+include ':shared:api'
+include ":shared:core"
+include ':shared:kotlin'
+include ':shared:testing'
+
+// Feature modules
+include ':feature:root'
+include ':feature:authentication'
+include ':feature:file-downloader'
+include ':feature:game:ballclicker'
+include ':feature:home'
+include ':feature:location-tracker'
+include ':feature:posts'
+include ':feature:radio'
+include ':feature:settings'
+include ':feature:notifications'
+include ':feature:movies'
+include ':feature:my-playground'

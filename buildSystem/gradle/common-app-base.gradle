@@ -1,0 +1,116 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdk = AppConfig.COMPILE_SDK_VERSION
+
+    defaultConfig {
+        applicationId = AppConfig.APPLICATION_ID
+        minSdk = AppConfig.MIN_SDK_VERSION
+        targetSdk = AppConfig.TARGET_SDK_VERSION
+        versionCode = AppVersion.CODE
+        versionName = AppVersion.NAME
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        multiDexEnabled = false
+        vectorDrawables.useSupportLibrary = true
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix = ".debug"
+            debuggable = true
+            enableAndroidTestCoverage = false
+            minifyEnabled = false
+            ext.enableCrashlytics = false
+        }
+        release {
+            debuggable = false
+            enableAndroidTestCoverage = false
+            minifyEnabled = true
+            shrinkResources = true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
+    }
+
+    kotlin.compilerOptions {
+        freeCompilerArgs = ['-Xstring-concat=inline']
+    }
+
+    lint {
+        abortOnError = false
+        checkDependencies = true
+        checkReleaseBuilds = false
+        ignoreTestSources = true
+        lintConfig = file("$rootDir/lint.xml")
+        htmlOutput = file("${layout.buildDirectory.get()}/reports/lint/lint-results.html")
+        xmlOutput = file("${layout.buildDirectory.get()}/reports/lint/lint-results.xml")
+        disable += ['LogNotTimber',
+                    'StringFormatInTimber',
+                    'ThrowableNotAtBeginning',
+                    'BinaryOperationInTimber',
+                    'TimberArgCount',
+                    'TimberArgTypes',
+                    'TimberTagLength',
+                    'TimberExceptionLogging']
+    }
+
+    packaging {
+        resources {
+            excludes += ['**/attach_hotspot_windows.dll',
+                         'META-INF/licenses/**',
+                         'META-INF/AL2.0',
+                         'META-INF/LGPL2.1',]
+        }
+    }
+}
+
+androidComponents.onVariants(androidComponents.selector().all()) { variant ->
+    variant.outputs.forEach { output ->
+        def projectName = "jetpack"
+        def apkExtension = ".apk"
+        def SEP = "_"
+        def variantName = variant.name
+        def versionName = output.versionName.getOrElse("")
+        def versionCode = output.versionCode.orNull
+        def date = new Date()
+        def formattedDate = date.format('ddMMyy_HHmm')
+        def newApkName = projectName + SEP + variantName + SEP + versionCode + SEP + versionName + SEP + formattedDate + apkExtension
+        output.outputFileName.set(newApkName)
+    }
+}
+
+dependencies {
+    implementation project(Modules.SHARED_CORE)
+    implementation project(Modules.SHARED_KOTLIN)
+
+    implementation libs.androidx.appcompat
+    implementation libs.koin.android
+
+    testImplementation(platform(libs.junit.bom))
+    testImplementation libs.junit.jupiter.api
+    testImplementation libs.junit.jupiter.params
+    testImplementation libs.koin.test
+
+    testRuntimeOnly libs.junit.platform.launcher
+    testRuntimeOnly libs.junit.jupiter.engine
+    testRuntimeOnly libs.junit.vintage.engine
+
+    androidTestImplementation libs.androidx.test.junit
+    androidTestImplementation libs.androidx.test.runner
+    androidTestImplementation libs.androidx.test.rules
+    androidTestImplementation libs.androidx.arch.core.testing
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation libs.androidx.compose.ui.test
+    androidTestImplementation libs.koin.test
+    
+    debugImplementation(platform(libs.androidx.compose.bom))
+    debugImplementation libs.androidx.compose.ui.test.manifest
+
+    lintChecks libs.structured.coroutines.lint
+}

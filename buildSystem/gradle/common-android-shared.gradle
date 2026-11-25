@@ -1,0 +1,38 @@
+apply from: "$rootDir/buildSystem/gradle/common-android-base.gradle"
+
+dependencies {
+    implementation project(Modules.SHARED_KOTLIN)
+    implementation(platform(libs.arrow.stack))
+    implementation libs.arrow.core
+    implementation libs.arrow.fx.coroutines
+    implementation libs.arrow.optics
+    implementation libs.arrow.optics.compose
+    implementation libs.arrow.retrofit
+    implementation libs.kotlinx.collections.immutable
+    implementation libs.kotlinx.coroutines.android
+    implementation libs.kotlinx.coroutines.core
+    implementation libs.kotlinx.serialization.json
+    implementation libs.koin.android
+    implementation libs.timber
+
+    debugImplementation libs.leak.canary
+
+    testImplementation libs.kotlinx.coroutines.test
+    testImplementation(platform(libs.junit.bom))
+    testImplementation libs.junit.jupiter.api
+    testImplementation libs.junit.jupiter.params
+    testImplementation libs.kluent
+    testImplementation libs.kluent.junit
+    testImplementation libs.koin.test
+    testImplementation libs.bundles.mockito
+    testImplementation libs.turbine
+
+    testRuntimeOnly libs.junit.platform.launcher
+    testRuntimeOnly libs.junit.jupiter.engine
+    testRuntimeOnly libs.junit.vintage.engine
+
+    androidTestImplementation libs.androidx.test.junit
+    androidTestImplementation libs.androidx.test.runner
+    androidTestImplementation libs.androidx.test.rules
+    androidTestImplementation libs.androidx.arch.core.testing
+}

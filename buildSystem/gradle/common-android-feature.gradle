@@ -1,0 +1,57 @@
+apply from: "$rootDir/buildSystem/gradle/common-android-base.gradle"
+apply from: "$rootDir/buildSystem/gradle/common-android-compose.gradle"
+
+dependencies {
+    implementation project(Modules.SHARED_CORE)
+    implementation project(Modules.SHARED_KOTLIN)
+
+    implementation libs.androidx.annotations
+    implementation libs.androidx.activity
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.arch.core.common
+    implementation libs.androidx.arch.core.runtime
+    implementation libs.androidx.core.ktx
+    implementation libs.androidx.lifecycle.extension
+    implementation libs.androidx.lifecycle.common
+    implementation libs.androidx.lifecycle.runtime
+    implementation libs.androidx.lifecycle.viewmodel
+    implementation libs.androidx.lifecycle.viewmodel.navigation3
+    implementation libs.androidx.navigation3.runtime
+    implementation libs.androidx.navigation3.ui
+    implementation(platform(libs.arrow.stack))
+    implementation libs.arrow.core
+    implementation libs.arrow.fx.coroutines
+    implementation libs.arrow.optics
+    implementation libs.arrow.optics.compose
+    implementation libs.arrow.retrofit
+    implementation libs.coil
+    implementation libs.koin.android
+    implementation libs.kotlinx.collections.immutable
+    implementation libs.kotlinx.coroutines.core
+    implementation libs.kotlinx.coroutines.android
+    implementation libs.kotlinx.serialization.core
+    implementation libs.kotlinx.serialization.json
+    implementation libs.google.android.material
+    implementation libs.timber
+
+    debugImplementation libs.leak.canary
+
+    ksp libs.arrow.optics.ksp.plugin
+
+    testImplementation project(Modules.SHARED_TESTING)
+    testImplementation libs.androidx.arch.core.testing
+    testImplementation libs.kotlinx.coroutines.test
+    testImplementation libs.koin.test
+    testImplementation libs.kluent
+    testImplementation libs.kluent.junit
+    testImplementation libs.kotlin.reflect
+    testImplementation libs.bundles.mockito
+    testImplementation(platform(libs.junit.bom))
+    testImplementation libs.junit.jupiter.api
+    testImplementation libs.junit.jupiter.params
+    testImplementation libs.turbine
+
+    testRuntimeOnly libs.junit.platform.launcher
+    testRuntimeOnly libs.junit.jupiter.engine
+    testRuntimeOnly libs.junit.vintage.engine
+}

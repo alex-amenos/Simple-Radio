@@ -1,0 +1,42 @@
+apply plugin: 'org.jetbrains.kotlin.plugin.compose'
+apply plugin: 'io.github.takahirom.roborazzi'
+
+composeCompiler {
+    enableStrongSkippingMode = true
+}
+
+android {
+    buildFeatures {
+        compose = true
+    }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
+}
+
+dependencies {
+    // BOM to library version mapping
+    // https://developer.android.com/jetpack/compose/bom/bom-mapping
+    def composeBom = platform(libs.androidx.compose.bom)
+
+    implementation(composeBom)
+    implementation libs.androidx.lifecycle.runtime.compose
+    implementation libs.bundles.androidx.compose
+    implementation libs.koin.android.compose
+    implementation libs.koin.android.compose.viewmodel
+
+    debugImplementation libs.androidx.compose.ui.tooling
+
+    testImplementation(platform(libs.junit.bom))
+    testImplementation libs.bundles.roborazzi
+    testImplementation libs.androidx.compose.ui.tooling
+    testImplementation libs.junit.platform.launcher
+    testImplementation libs.junit.jupiter.engine
+    testImplementation libs.junit.vintage.engine
+
+    // https://slackhq.github.io/compose-lints/
+    lintChecks libs.slack.lint.compose
+}

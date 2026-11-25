@@ -1,0 +1,21 @@
+apply from: "$rootDir/buildSystem/gradle/common-android-shared.gradle"
+
+def tmdbApiToken = (project.findProperty('THEMOVIEDB_ORG_API_TOKEN') ?: "").toString()
+
+android {
+    namespace = 'com.alxnophis.jetpack.api'
+
+    buildFeatures {
+        buildConfig = true
+    }
+
+    defaultConfig {
+        buildConfigField("String", "THEMOVIEDB_ORG_API_TOKEN", "\"${tmdbApiToken}\"")
+    }
+}
+
+dependencies {
+    implementation libs.bundles.retrofit
+    debugImplementation libs.chucker
+    releaseImplementation libs.chucker.release
+}

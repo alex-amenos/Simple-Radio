@@ -1,0 +1,10 @@
+apply from: "$rootDir/buildSystem/gradle/common-android-base.gradle"
+
+android {
+    namespace = 'com.alxnophis.jetpack.kotlin'
+}
+
+dependencies {
+    implementation libs.kotlinx.coroutines.core
+    implementation libs.kotlinx.coroutines.android
+}

@@ -1,0 +1,63 @@
+package com.alxnophis.jetpack.posts.ui.composable.provider
+
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import com.alxnophis.jetpack.posts.data.model.Post
+import com.alxnophis.jetpack.posts.ui.contract.PostUiError
+import com.alxnophis.jetpack.posts.ui.contract.PostsStatus
+import com.alxnophis.jetpack.posts.ui.contract.PostsUiState
+import kotlinx.collections.immutable.toImmutableList
+
+internal class PostsScreenPreviewProvider : PreviewParameterProvider<PostsUiState> {
+    override val values =
+        sequenceOf(
+            PostsUiState(
+                status = PostsStatus.Success,
+                posts = listOf(post1, post2).toImmutableList(),
+                error = null,
+            ),
+            PostsUiState(
+                status = PostsStatus.Loading,
+                posts = emptyList<Post>().toImmutableList(),
+                error = null,
+            ),
+            PostsUiState(
+                status = PostsStatus.Error,
+                posts = emptyList<Post>().toImmutableList(),
+                error = PostUiError.Network(),
+            ),
+            PostsUiState(
+                status = PostsStatus.Error,
+                posts = emptyList<Post>().toImmutableList(),
+                error = PostUiError.Server(),
+            ),
+            PostsUiState(
+                status = PostsStatus.Error,
+                posts = emptyList<Post>().toImmutableList(),
+                error = PostUiError.Unexpected(),
+            ),
+            PostsUiState(
+                status = PostsStatus.Error,
+                posts = emptyList<Post>().toImmutableList(),
+                error = PostUiError.NoConnectivity(),
+            ),
+        )
+
+    companion object {
+        val post1 =
+            Post(
+                id = 1,
+                userId = 1,
+                title = "Title 1",
+                body = "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+            )
+        val post2 =
+            Post(
+                id = 2,
+                userId = 1,
+                title = "Title 2",
+                body =
+                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
+                        "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            )
+    }
+}

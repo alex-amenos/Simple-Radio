@@ -1,0 +1,102 @@
+apply plugin: 'com.android.library'
+apply plugin: 'org.jetbrains.kotlin.plugin.serialization'
+apply plugin: 'org.jetbrains.kotlin.plugin.parcelize'
+apply plugin: 'com.google.devtools.ksp'
+apply plugin: 'com.adarshr.test-logger'
+apply plugin: 'de.mannodermaus.android-junit'
+apply plugin: 'org.jetbrains.kotlinx.kover'
+
+android {
+    compileSdk = AppConfig.COMPILE_SDK_VERSION
+
+    defaultConfig {
+        minSdk = AppConfig.MIN_SDK_VERSION
+        targetSdk = AppConfig.TARGET_SDK_VERSION
+        versionCode = AppVersion.CODE
+        versionName = AppVersion.NAME
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        multiDexEnabled = true
+        vectorDrawables.useSupportLibrary = true
+        consumerProguardFiles 'proguard-rules.pro'
+    }
+
+    buildTypes {
+        debug {
+            debuggable = true
+            minifyEnabled = false
+            buildConfigField("String", "APP_PACKAGE_NAME", "\"${AppConfig.APP_PACKAGE_NAME_DEBUG}\"")
+            buildConfigField("String", "APP_CRYPTO_KEY_ALIAS", "\"${AppConfig.APP_PACKAGE_NAME_DEBUG.hashCode()}\"")
+        }
+        release {
+            debuggable = false
+            minifyEnabled = false
+            buildConfigField("String", "APP_PACKAGE_NAME", "\"${AppConfig.APP_PACKAGE_NAME}\"")
+            buildConfigField("String", "APP_CRYPTO_KEY_ALIAS", "\"${AppConfig.APP_PACKAGE_NAME.hashCode()}\"")
+        }
+    }
+
+    buildFeatures {
+        buildConfig = true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
+    }
+
+    kotlin.compilerOptions {
+        freeCompilerArgs = ['-Xstring-concat=inline']
+    }
+
+    testOptions {
+        unitTests.all {
+            it.useJUnitPlatform()
+            it.systemProperty("robolectric.enabledSdks", "36")
+            it.jvmArgs += [
+                '--add-opens=java.base/java.lang=ALL-UNNAMED',
+                '--add-opens=java.base/java.util=ALL-UNNAMED',
+                '--add-opens=java.base/java.io=ALL-UNNAMED',
+                '--add-opens=java.base/java.net=ALL-UNNAMED',
+                '--add-opens=java.base/java.security=ALL-UNNAMED',
+                '--add-opens=java.base/java.text=ALL-UNNAMED',
+                '--add-opens=java.base/jdk.internal.access=ALL-UNNAMED',
+                '--add-opens=java.desktop/java.awt.font=ALL-UNNAMED',
+                '--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED',
+            ]
+        }
+    }
+
+    lint {
+        abortOnError = false
+        checkDependencies = true
+        checkReleaseBuilds = false
+        ignoreTestSources = true
+        lintConfig = file("$rootDir/lint.xml")
+        htmlOutput = file("${layout.buildDirectory.get()}/reports/lint/lint-results.html")
+        xmlOutput = file("${layout.buildDirectory.get()}/reports/lint/lint-results.xml")
+        disable += ['LogNotTimber',
+                    'StringFormatInTimber',
+                    'ThrowableNotAtBeginning',
+                    'BinaryOperationInTimber',
+                    'TimberArgCount',
+                    'TimberArgTypes',
+                    'TimberTagLength',
+                    'TimberExceptionLogging']
+    }
+
+    packaging {
+        resources {
+            excludes += ['**/attach_hotspot_windows.dll',
+                         'META-INF/licenses/**',
+                         'META-INF/AL2.0',
+                         'META-INF/LGPL2.1',]
+        }
+    }
+}
+
+dependencies {
+    implementation libs.kotlin.parcelize.runtime
+    lintChecks libs.structured.coroutines.lint
+}

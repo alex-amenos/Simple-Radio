@@ -1,0 +1,173 @@
+# Jetpack playgrounds
+
+It is a personal project to experiment with Android development.
+
+ℹ️ Some experiments are not completed in terms of development, you can see on code maybe is missing testing or some data/domain layer.
+
+## Home
+
+It is the home screen where you can select some of experiments of this project.
+
+<table>
+  <tr>
+    <td><img alt="Home screen 1" src="images/home_screen_1.png" width="300" /></td>
+    <td><img alt="Home screen 2" src="images/home_screen_2.png" width="300" /></td>
+  </tr>
+</table>
+
+## Posts
+
+Load posts from JsonPlaceholder Rest API.<br>
+Uses adaptive layouts to support both phone and tablet form factors.<br><br>
+
+This module is the most complete in the project and demonstrates modern Android architecture and robust testing practices:<br>
+
+- **Architecture**: MVI (Model-View-Intent) pattern.
+- **UI**: Built entirely with Jetpack Compose.
+- **Data Layer**: Offline-first architecture with Room database persistence. Cache-first strategy with network fallback.
+- **Background work**: Automatic background refresh every 24 hours.
+- **Error Handling**: Functional error handling using Arrow `Either` and typed errors.
+- **Testing**: Highly covered with JUnit 5 unit tests, Kotest `BehaviorSpec` BDD tests, and Compose snapshot testing using Roborazzi.
+
+<table>
+  <tr>
+    <td><img alt="Posts list 1" src="./images/posts_screen_list_1.png" width="300" /></td>
+    <td><img alt="Posts list 2" src="./images/posts_screen_list_2.png" width="300" /></td>
+  </tr>
+  <tr>
+    <td><img alt="Posts list in landscape 1" src="./images/posts_screen_list_landscape_1.png" width="500" /></td>
+    <td><img alt="Posts list in landscape 2" src="./images/posts_screen_list_landscape_2.png" width="500" /></td>
+  </tr>
+  <tr>
+    <td><img alt="Posts list and detail in landscape 1" src="./images/posts_screen_detail_landscape_1.png" width="500" /></td>
+    <td><img alt="Posts list and detail in landscape 2" src="./images/posts_screen_detail_landscape_2.png" width="500" /></td>
+  </tr>
+  <tr>
+    <td><img alt="Posts detail 1" src="./images/posts_screen_detail_1.png" width="300" /></td>
+    <td><img alt="Posts detail 2" src="./images/posts_screen_detail_2.png" width="300" /></td>
+  </tr>
+</table>
+
+## Movies
+
+Search and view details for movies using The Movie DB (TMDB) API.<br>
+Uses adaptive layouts to support both phone and tablet form factors.<br><br>
+More experiment info:<br>
+
+- **Architecture**: MVI (Model-View-Intent) pattern.
+- **Navigation**: Uses Jetpack Navigation 3 with `ListDetailSceneStrategy` for adaptive panes.
+- **UI**: Built entirely with Jetpack Compose.
+- **Pagination**: Uses `androidx.paging` components for infinite scrolling of movie search results.
+- **Data Layer**: Network requests via Retrofit with TMDB API.
+- **Error Handling**: Functional error handling using Arrow `Either` and typed errors.
+- **Testing**: Covered with JUnit 5 unit tests.
+
+<table>
+  <tr>
+    <td><img alt="Movies list dark theme" src="./images/movies_screen_portrait_1.png" width="300" /></td>
+    <td><img alt="Movies list light theme" src="./images/movies_screen_portrait_2.png" width="300" /></td>
+  </tr>
+  <tr>
+    <td><img alt="Movie detail dark theme" src="./images/movie_detail_screen_portrait_1.png" width="500" /></td>
+    <td><img alt="Movie detail light theme" src="./images/movie_detail_screen_portrait_2.png" width="500" /></td>
+  </tr>
+  <tr>
+    <td><img alt="Movies list and detail in landscape dark theme" src="./images/movies_screen_landscape_1.png" width="500" /></td>
+    <td><img alt="Movies list and detail in landscape light theme" src="./images/movies_screen_landscape_2.png" width="500" /></td>
+  </tr>
+</table>
+
+## Radio streaming
+
+Live Spanish radio stations from the [Radio Browser](https://www.radio-browser.info/) API, played in the background with Media3.<br><br>
+More experiment info:<br>
+
+- **Playback**: `MediaSessionService` with ExoPlayer and a `MediaController` bridge. Keeps playing when the app is in the background, with a media notification that opens the player screen.
+- **Streams**: HTTPS only, including HLS (`.m3u8`) streams. Live-tuned buffer of 3 seconds.
+- **Data**: Up to 50 Spanish stations, sorted by name, from Radio Browser. Retrofit client with a custom `User-Agent`.
+- **Player**: Play, pause, previous and next station, stop, retry on error, and a sleep timer (15, 30 or 60 minutes) with a live countdown.
+- **Architecture**: MVI for the station list and player screens. The domain models and repository contract live in the data layer, and `RadioPlayer` hides Media3 from the UI.
+- **Testing**: Unit tests with JUnit 5 and Turbine, fixture tests with a recorded station list, and Compose snapshot testing using Roborazzi.
+
+<table>
+  <tr>
+    <td><img alt="Radio stations list light theme" src="./images/radio_station_list_1.png" width="300" /></td>
+    <td><img alt="Radio stations list dark theme" src="./images/radio_station_list_dark_1.png" width="300" /></td>
+  </tr>
+  <tr>
+    <td><img alt="Radio player light theme" src="./images/radio_player_screen_1.png" width="300" /></td>
+    <td><img alt="Radio player dark theme" src="./images/radio_player_screen_dark_1.png" width="300" /></td>
+  </tr>
+  <tr>
+    <td colspan="2"><img alt="Radio player in landscape" src="./images/radio_player_screen_landscape_1.png" width="500" /></td>
+  </tr>
+</table>
+
+## Location tracker
+
+User location tracking with an integrated Google Maps UI, custom UI overlays, and automatic camera framing.
+
+More experiment info:
+
+- **Architecture**: MVI (Model-View-Intent) pattern with `LocationRepository` abstraction.
+- **UI**: Jetpack Compose map rendering via `maps-compose`. Edge-to-edge support with safe padding.
+- **Location**: Tracks user fine/coarse location dynamically utilizing `FusedLocationProviderClient`.
+- **Map Interaction**: Auto-follows the user, smoothly animating the camera. Panning the map manually suspends the auto-follow mode until the user clicks the track button.
+- **State Handling**: Uses Arrow Optics for MVI immutable state manipulation. Uses `BroadcastReceiver` inside a `DisposableEffect` to seamlessly handle external system location toggle changes without memory leaks.
+- **Testing**: Experiment without testing.
+
+<table>
+  <tr>
+    <td><img alt="Location permissions 1" src="./images/location_tracker_screen_1.png" width="300" /></td>
+    <td><img alt="Location permissions 2" src="./images/location_tracker_screen_2.png" width="300" /></td>
+    <td><img alt="Location permissions 3" src="./images/location_tracker_screen_3.png" width="300" /></td>
+  </tr>
+</table>
+
+## Authentication
+
+Authentication form with SignUp and SignIn.<br><br>
+More experiment info:<br>
+
+- Experiment with testing: unit tests
+
+<img alt="Authentication screen" src="./images/authentication_screen.png" width="300" />
+
+## Settings
+
+Settings options screen.<br><br>
+More experiment info:<br>
+
+- Persisted user preferences using Jetpack Preferences DataStore (`SettingsRepository`).<br>
+- Exposes theme preferences across modules for global Compose dynamic theming.<br>
+- Architecture: Standard `ViewModel` exposing reactive `StateFlow` via `stateIn(WhileSubscribed)`.<br>
+- Experiment with testing: unit tests with Turbine.
+
+<img alt="Settings screen" src="./images/settings_screen.png" width="300" />
+
+## Notifications
+
+Push Notifications screen.<br><br>
+More experiment info:<br>
+
+- Experiment without testing.
+
+<img alt="Notifications screen" src="./images/notifications_screen.png" width="300" />
+
+## Ball clicker (Game)
+
+Ball clicker game (custom view with compose).<br><br>
+More experiment info:<br>
+
+- Experiment without testing.
+
+<img alt="Ball clicker game" src="./images/game_ball_clicker_screen.png" width="300" />
+
+## File downloader
+
+Download files using a [DownloadManager](https://developer.android.com/reference/android/app/DownloadManager)<br><br>
+More experiment info:<br>
+
+- Experiment without testing.
+
+<img alt="File downloader" src="./images/file_downloader_screen.png" width="300" />

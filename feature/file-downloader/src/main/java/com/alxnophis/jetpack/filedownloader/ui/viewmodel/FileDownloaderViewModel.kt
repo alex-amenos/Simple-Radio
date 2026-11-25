@@ -1,0 +1,123 @@
+package com.alxnophis.jetpack.filedownloader.ui.viewmodel
+
+import androidx.lifecycle.viewModelScope
+import arrow.optics.updateCopy
+import com.alxnophis.jetpack.core.extensions.isValidUrl
+import com.alxnophis.jetpack.core.ui.viewmodel.BaseViewModel
+import com.alxnophis.jetpack.filedownloader.R
+import com.alxnophis.jetpack.filedownloader.data.model.DownloaderFile
+import com.alxnophis.jetpack.filedownloader.data.model.FileDownloaderError
+import com.alxnophis.jetpack.filedownloader.data.repository.FileDownloaderRepository
+import com.alxnophis.jetpack.filedownloader.ui.contract.FileDownloaderUiError
+import com.alxnophis.jetpack.filedownloader.ui.contract.FileDownloaderUiEvent
+import com.alxnophis.jetpack.filedownloader.ui.contract.FileDownloaderUiState
+import com.alxnophis.jetpack.filedownloader.ui.contract.error
+import com.alxnophis.jetpack.filedownloader.ui.contract.fileStatusList
+import com.alxnophis.jetpack.filedownloader.ui.contract.url
+import com.alxnophis.jetpack.kotlin.constants.EMPTY
+import com.alxnophis.jetpack.kotlin.constants.WHITE_SPACE
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import timber.log.Timber
+
+internal class FileDownloaderViewModel(
+    private val fileDownloaderRepository: FileDownloaderRepository,
+    private val initialState: FileDownloaderUiState = FileDownloaderUiState.initialState,
+) : BaseViewModel<FileDownloaderUiEvent, FileDownloaderUiState>(initialState) {
+    private var fileDownloaderJob: Job? = null
+
+    override val uiState: StateFlow<FileDownloaderUiState> =
+        _uiState
+            .onStart { subscribeToDownloaderFilesStatus() }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = initialState,
+            )
+
+    override fun handleEvent(event: FileDownloaderUiEvent) {
+        Timber.d("## FileDownloaderViewModel processing event: $event")
+        viewModelScope.launch {
+            when (event) {
+                is FileDownloaderUiEvent.UrlChanged -> updateUrl(event.url)
+                is FileDownloaderUiEvent.DownloadFileRequested -> downloadFile()
+                is FileDownloaderUiEvent.ErrorDismissRequested -> dismissError(event.errorId)
+            }
+        }
+    }
+
+    private fun subscribeToDownloaderFilesStatus() {
+        if (fileDownloaderJob != null) return
+        fileDownloaderJob =
+            fileDownloaderRepository.downloadingFiles
+                .combine(fileDownloaderRepository.downloadedFiles) { downloadingFiles, downloadedFiles ->
+                    val downloadingList = downloadingFiles.map { it.mapTo(DOWNLOADING_STATUS) }
+                    val downloadedList = downloadedFiles.map { it.mapTo(DOWNLOADED_STATUS) }
+                    _uiState.updateCopy {
+                        FileDownloaderUiState.fileStatusList set (downloadingList + downloadedList)
+                    }
+                }.launchIn(this.viewModelScope)
+    }
+
+    private fun updateUrl(url: String) {
+        viewModelScope.launch {
+            _uiState.updateCopy {
+                FileDownloaderUiState.url set url
+            }
+        }
+    }
+
+    private fun downloadFile() {
+        viewModelScope.launch {
+            val urlFile = currentUiState.url
+            if (urlFile.isValidUrl()) {
+                fileDownloaderRepository
+                    .downloadFile(urlFile)
+                    .fold(
+                        { error ->
+                            val errorResId =
+                                when (error) {
+                                    FileDownloaderError.FileDownloaded -> R.string.file_downloader_file_downloaded
+                                    FileDownloaderError.FileDownloading -> R.string.file_downloader_file_downloading
+                                    FileDownloaderError.Unknown -> R.string.file_downloader_generic_error
+                                }
+                            _uiState.updateCopy {
+                                FileDownloaderUiState.error set FileDownloaderUiError(messageRes = errorResId)
+                            }
+                        },
+                        {
+                            _uiState.updateCopy {
+                                FileDownloaderUiState.url set EMPTY
+                            }
+                        },
+                    )
+            }
+        }
+    }
+
+    private fun dismissError(errorId: Long) {
+        if (currentUiState.error?.id == errorId) {
+            _uiState.updateCopy {
+                FileDownloaderUiState.error set null
+            }
+        }
+    }
+
+    private fun DownloaderFile.mapTo(status: String) =
+        buildString {
+            append(status)
+            append(WHITE_SPACE)
+            append(url)
+        }
+
+    companion object {
+        private const val DOWNLOADING_STATUS = "⏳"
+        private const val DOWNLOADED_STATUS = "✅"
+    }
+}

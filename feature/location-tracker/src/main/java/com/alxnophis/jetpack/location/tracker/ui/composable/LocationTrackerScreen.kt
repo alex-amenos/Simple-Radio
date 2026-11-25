@@ -1,0 +1,465 @@
+package com.alxnophis.jetpack.location.tracker.ui.composable
+
+import android.Manifest
+import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.location.LocationManager
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationSearching
+import androidx.compose.material.icons.filled.MyLocation
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import androidx.core.location.LocationManagerCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
+import com.alxnophis.jetpack.core.ui.theme.AppTheme
+import com.alxnophis.jetpack.core.ui.theme.mediumPadding
+import com.alxnophis.jetpack.kotlin.constants.ZERO_DOUBLE
+import com.alxnophis.jetpack.location.tracker.R
+import com.alxnophis.jetpack.location.tracker.ui.composable.provider.UserLocationPreviewProvider
+import com.alxnophis.jetpack.location.tracker.ui.contract.LocationTrackerUiEvent
+import com.alxnophis.jetpack.location.tracker.ui.contract.LocationTrackerUiState
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.CameraMoveStartedReason
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.MapUiSettings
+import com.google.maps.android.compose.MarkerComposable
+import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.maps.android.compose.rememberMarkerState
+import kotlinx.coroutines.launch
+
+private const val DEFAULT_ZOOM_IN = 14f
+private const val DEFAULT_ZOOM_OUT = 3f
+
+@SuppressLint("WrongConstant")
+@Composable
+private fun rememberIsLocationEnabled(): Boolean {
+    val context = LocalContext.current.applicationContext
+    var isEnabled by remember {
+        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        mutableStateOf(LocationManagerCompat.isLocationEnabled(locationManager))
+    }
+    DisposableEffect(context) {
+        val receiver =
+            object : BroadcastReceiver() {
+                override fun onReceive(
+                    context: Context?,
+                    intent: Intent?,
+                ) {
+                    if (intent?.action == LocationManager.PROVIDERS_CHANGED_ACTION) {
+                        val locationManager = context?.getSystemService(Context.LOCATION_SERVICE) as? LocationManager
+                        if (locationManager != null) {
+                            isEnabled = LocationManagerCompat.isLocationEnabled(locationManager)
+                        }
+                    }
+                }
+            }
+        ContextCompat.registerReceiver(
+            context,
+            receiver,
+            IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION),
+            ContextCompat.RECEIVER_EXPORTED,
+        )
+        onDispose {
+            context.unregisterReceiver(receiver)
+        }
+    }
+    return isEnabled
+}
+
+@Composable
+internal fun LocationTrackerScreen(
+    uiState: LocationTrackerUiState,
+    onBack: () -> Unit = {},
+    onEvent: (LocationTrackerUiEvent) -> Unit = {},
+) {
+    val context = LocalContext.current
+    val isDeviceLocationEnabled = rememberIsLocationEnabled()
+    var isPermissionGranted by remember {
+        mutableStateOf(context.hasLocationPermission())
+    }
+    val permissionLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestMultiplePermissions(),
+            onResult = { permissions: Map<String, Boolean> ->
+                isPermissionGranted = permissions.values.any { it }
+            },
+        )
+    val requestLocationPermissions: () -> Unit = {
+        permissionLauncher.launch(
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+            ),
+        )
+    }
+    var showPermissionDialog by rememberSaveable {
+        mutableStateOf(!isPermissionGranted || !isDeviceLocationEnabled)
+    }
+
+    LaunchedEffect(isPermissionGranted, isDeviceLocationEnabled) {
+        if (!isPermissionGranted || !isDeviceLocationEnabled) {
+            showPermissionDialog = true
+            onEvent(LocationTrackerUiEvent.LocationAccessRevoked)
+        } else {
+            showPermissionDialog = false
+            onEvent(LocationTrackerUiEvent.LocationAccessGranted)
+        }
+    }
+
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        isPermissionGranted = context.hasLocationPermission()
+    }
+
+    BackHandler {
+        onEvent(LocationTrackerUiEvent.StopTrackingRequested)
+        onBack()
+    }
+
+    AppTheme {
+        if (showPermissionDialog) {
+            LocationAccessRationaleDialog(
+                isPermissionGranted = isPermissionGranted,
+                onDismissRequest = { showPermissionDialog = false },
+                onConfirmRequest = {
+                    showPermissionDialog = false
+                    requestLocationPermissions()
+                },
+            )
+        }
+
+        MapComposable(
+            uiState = uiState,
+            isDeviceLocationEnabled = isDeviceLocationEnabled,
+            onEvent = onEvent,
+            modifier = Modifier.fillMaxSize(),
+            onBack = onBack,
+        )
+    }
+}
+
+@Composable
+private fun MapComposable(
+    uiState: LocationTrackerUiState,
+    isDeviceLocationEnabled: Boolean,
+    onEvent: (LocationTrackerUiEvent) -> Unit,
+    modifier: Modifier = Modifier,
+    onBack: () -> Unit = {},
+) {
+    val isInspectionMode = LocalInspectionMode.current
+    val isLocationActive = isDeviceLocationEnabled && uiState.hasLocationAccess
+    val locationData =
+        remember(uiState.userLocationData, uiState.lastKnownLocationData) {
+            uiState.userLocationData ?: uiState.lastKnownLocationData
+        }
+    val position =
+        remember(locationData) {
+            locationData?.let { LatLng(it.latitude, it.longitude) } ?: LatLng(ZERO_DOUBLE, ZERO_DOUBLE)
+        }
+    val initialZoom = if (isLocationActive) DEFAULT_ZOOM_IN else DEFAULT_ZOOM_OUT
+    val cameraPositionState =
+        rememberCameraPositionState {
+            this.position = CameraPosition.fromLatLngZoom(position, initialZoom)
+        }
+    val mapProperties = remember { MapProperties(isMyLocationEnabled = false) }
+    val mapUiSettings =
+        remember {
+            MapUiSettings(
+                myLocationButtonEnabled = false,
+                mapToolbarEnabled = false,
+                zoomControlsEnabled = false,
+            )
+        }
+
+    // Stop following if user drags map
+    LaunchedEffect(cameraPositionState.isMoving) {
+        if (cameraPositionState.isMoving && cameraPositionState.cameraMoveStartedReason == CameraMoveStartedReason.GESTURE &&
+            uiState.isFollowingUser
+        ) {
+            onEvent(LocationTrackerUiEvent.MapDraggedByGesture)
+        }
+    }
+    // Update camera position when location changes
+    LaunchedEffect(position, uiState.isFollowingUser) {
+        if (uiState.isFollowingUser && isLocationActive) {
+            val currentLatLng = cameraPositionState.position.target
+            if (currentLatLng.latitude != position.latitude || currentLatLng.longitude != position.longitude) {
+                val zoom = if (cameraPositionState.position.zoom > DEFAULT_ZOOM_OUT) cameraPositionState.position.zoom else DEFAULT_ZOOM_IN
+                cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(position, zoom))
+            }
+        }
+    }
+    val coroutineScope = rememberCoroutineScope()
+    Box(modifier) {
+        if (isInspectionMode) {
+            FakeMapComposable(
+                hasLocationData = locationData != null,
+                modifier = Modifier.fillMaxSize(),
+            )
+        } else {
+            GoogleMap(
+                modifier = Modifier.fillMaxSize(),
+                cameraPositionState = cameraPositionState,
+                properties = mapProperties,
+                uiSettings = mapUiSettings,
+                contentPadding = WindowInsets.safeDrawing.asPaddingValues(),
+            ) {
+                if (locationData != null) {
+                    val markerState = rememberMarkerState(position = position)
+                    markerState.position = position
+                    MarkerComposable(
+                        tag = "user_location_marker",
+                        state = markerState,
+                        title = stringResource(id = R.string.location_tracker_current_location),
+                        snippet = "${locationData.latitude}, ${locationData.longitude}",
+                    ) {
+                        UserLocationMarkerContent()
+                    }
+                }
+            }
+        }
+        GoBackIconButton(
+            modifier =
+                Modifier
+                    .align(Alignment.TopStart)
+                    .padding(mediumPadding)
+                    .padding(WindowInsets.safeDrawing.asPaddingValues())
+                    .size(48.dp),
+            onGoBack = {
+                onEvent(LocationTrackerUiEvent.StopTrackingRequested)
+                onBack()
+            },
+        )
+        if (uiState.hasLocationAccess && isDeviceLocationEnabled && locationData != null) {
+            FollowUserIconButton(
+                modifier =
+                    Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(mediumPadding)
+                        .padding(WindowInsets.safeDrawing.asPaddingValues())
+                        .size(48.dp),
+                isFollowingUser = uiState.isFollowingUser,
+                onClick = {
+                    onEvent(LocationTrackerUiEvent.FollowUserClicked)
+                    coroutineScope.launch {
+                        val zoom = if (cameraPositionState.position.zoom > DEFAULT_ZOOM_OUT) cameraPositionState.position.zoom else DEFAULT_ZOOM_IN
+                        cameraPositionState.animate(CameraUpdateFactory.newLatLngZoom(position, zoom))
+                    }
+                },
+            )
+        }
+    }
+}
+
+@Composable
+private fun UserLocationMarkerContent(modifier: Modifier = Modifier) {
+    Box(
+        modifier =
+            modifier
+                .size(16.dp)
+                .background(
+                    color = Color(0xFF4285F4),
+                    shape = CircleShape,
+                ).border(
+                    width = 2.dp,
+                    color = Color.White,
+                    shape = CircleShape,
+                ),
+    )
+}
+
+@Composable
+private fun GoBackIconButton(
+    onGoBack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    IconButton(
+        colors = IconButtonDefaults.iconButtonColors(containerColor = Color.White),
+        modifier = modifier,
+        onClick = onGoBack,
+    ) {
+        Icon(
+            painter = painterResource(id = com.alxnophis.jetpack.core.R.drawable.ic_arrow_back),
+            contentDescription = stringResource(id = R.string.location_tracker_cd_go_back),
+            tint = Color.Black,
+            modifier = Modifier.size(28.dp),
+        )
+    }
+}
+
+@Composable
+private fun FollowUserIconButton(
+    isFollowingUser: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    IconButton(
+        colors = IconButtonDefaults.iconButtonColors(containerColor = Color.White),
+        onClick = onClick,
+        modifier = modifier,
+    ) {
+        Icon(
+            imageVector =
+                if (isFollowingUser) {
+                    Icons.Default.MyLocation
+                } else {
+                    Icons.Default.LocationSearching
+                },
+            contentDescription = stringResource(id = R.string.location_tracker_current_location),
+            tint = if (isFollowingUser) MaterialTheme.colorScheme.primary else Color.Black,
+            modifier = Modifier.size(28.dp),
+        )
+    }
+}
+
+@Composable
+private fun LocationAccessRationaleDialog(
+    isPermissionGranted: Boolean,
+    onDismissRequest: () -> Unit,
+    onConfirmRequest: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        icon = {
+            Icon(
+                imageVector = Icons.Default.LocationSearching,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+            )
+        },
+        title = {
+            Text(
+                text = stringResource(R.string.location_tracker_permissions_rationale_title),
+                style = MaterialTheme.typography.titleLarge,
+            )
+        },
+        text = {
+            Text(
+                text = stringResource(R.string.location_tracker_permissions_rationale_description),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        },
+        containerColor = MaterialTheme.colorScheme.surface,
+        titleContentColor = MaterialTheme.colorScheme.onSurface,
+        textContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        confirmButton = {
+            if (!isPermissionGranted) {
+                TextButton(
+                    onClick = onConfirmRequest,
+                ) {
+                    Text(
+                        text = stringResource(R.string.location_tracker_permissions_rationale_accept),
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismissRequest) {
+                Text(
+                    text = stringResource(R.string.location_tracker_permissions_rationale_dismiss),
+                    color = MaterialTheme.colorScheme.secondary,
+                )
+            }
+        },
+    )
+}
+
+@Composable
+private fun FakeMapComposable(
+    hasLocationData: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_location_tracker_map_placeholder),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize(),
+        )
+        if (hasLocationData) {
+            UserLocationMarkerContent(
+                modifier = Modifier.align(Alignment.Center),
+            )
+        }
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun LocationAccessRationaleDialogPreview() {
+    AppTheme {
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background),
+            contentAlignment = Alignment.Center,
+        ) {
+            LocationAccessRationaleDialog(
+                isPermissionGranted = false,
+                onDismissRequest = {},
+                onConfirmRequest = {},
+            )
+        }
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun MapComposablePreview(
+    @PreviewParameter(UserLocationPreviewProvider::class) uiState: LocationTrackerUiState,
+) {
+    MapComposable(
+        uiState = uiState,
+        isDeviceLocationEnabled = uiState.hasLocationAccess,
+        modifier = Modifier.fillMaxSize(),
+        onEvent = {},
+    )
+}
