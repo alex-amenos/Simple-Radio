@@ -43,10 +43,10 @@ internal class CountrySelectorViewModel(
             repository
                 .getCountries()
                 .fold(
-                    ifLeft = {
+                    {
                         _uiState.update { it.copy(status = CountrySelectorStatus.Error) }
                     },
-                    ifRight = { loaded ->
+                    { loaded ->
                         allCountries = loaded
                         filterCountries(_uiState.value.query)
                     },
@@ -61,8 +61,7 @@ internal class CountrySelectorViewModel(
             } else {
                 val trimmed = query.trim()
                 allCountries.filter { country ->
-                    country.name.contains(trimmed, ignoreCase = true) ||
-                        country.code.contains(trimmed, ignoreCase = true)
+                    country.name.contains(trimmed, ignoreCase = true) || country.code.contains(trimmed, ignoreCase = true)
                 }
             }
 

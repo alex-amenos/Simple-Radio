@@ -119,8 +119,8 @@ internal class SearchViewModel(
             emit(SearchResults(SearchStatus.Loading))
             emit(
                 searchStations(name = searchRequest.query, countryCode = searchRequest.country?.code).fold(
-                    ifLeft = { SearchResults(SearchStatus.Error) },
-                    ifRight = { stations -> stations.toSearchResults() },
+                    { SearchResults(SearchStatus.Error) },
+                    { stations -> stations.toSearchResults() },
                 ),
             )
         }
