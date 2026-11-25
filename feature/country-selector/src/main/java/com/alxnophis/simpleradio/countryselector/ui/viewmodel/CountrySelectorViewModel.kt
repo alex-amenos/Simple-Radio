@@ -32,7 +32,13 @@ internal class CountrySelectorViewModel(
 
     fun handleEvent(event: CountrySelectorEvent) {
         when (event) {
-            is CountrySelectorEvent.QueryChanged -> filterCountries(event.query)
+            is CountrySelectorEvent.QueryChanged -> {
+                if (_uiState.value.status == CountrySelectorStatus.Loading || _uiState.value.status == CountrySelectorStatus.Error) {
+                    _uiState.update { it.copy(query = event.query) }
+                } else {
+                    filterCountries(event.query)
+                }
+            }
             CountrySelectorEvent.Retry -> loadCountries()
         }
     }
