@@ -1,56 +1,52 @@
 package com.alxnophis.jetpack.radioplayer.ui.viewmodel
 
 import android.os.SystemClock
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import arrow.optics.copy
-import com.alxnophis.jetpack.core.ui.viewmodel.BaseViewModel
 import com.alxnophis.jetpack.radioplayer.playback.RadioPlayer
+import com.alxnophis.jetpack.radioplayer.playback.RadioPlayerSnapshot
 import com.alxnophis.jetpack.radioplayer.ui.contract.RadioPlayerEvent
 import com.alxnophis.jetpack.radioplayer.ui.contract.RadioPlayerUiState
-import com.alxnophis.jetpack.radioplayer.ui.contract.artworkUri
-import com.alxnophis.jetpack.radioplayer.ui.contract.canNext
-import com.alxnophis.jetpack.radioplayer.ui.contract.canPrevious
-import com.alxnophis.jetpack.radioplayer.ui.contract.sleepTimerRemainingMillis
-import com.alxnophis.jetpack.radioplayer.ui.contract.stationName
-import com.alxnophis.jetpack.radioplayer.ui.contract.status
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.stateIn
 import timber.log.Timber
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class RadioPlayerViewModel(
     private val player: RadioPlayer,
     initialUiState: RadioPlayerUiState = RadioPlayerUiState.initialState,
     private val clock: () -> Long = { SystemClock.elapsedRealtime() },
-) : BaseViewModel<RadioPlayerEvent, RadioPlayerUiState>(initialUiState) {
+) : ViewModel() {
     init {
         player.connect()
-        viewModelScope.launch {
-            player.snapshot.collect { snapshot ->
-                updateUiState {
-                    copy {
-                        RadioPlayerUiState.stationName set snapshot.stationName
-                        RadioPlayerUiState.artworkUri set snapshot.artworkUri?.toString()
-                        RadioPlayerUiState.status set snapshot.status
-                        RadioPlayerUiState.canPrevious set snapshot.hasPrevious
-                        RadioPlayerUiState.canNext set snapshot.hasNext
-                    }
-                }
-            }
-        }
-        viewModelScope.launch {
-            player.snapshot
-                .map { it.sleepTimerDeadlineMillis }
-                .distinctUntilChanged()
-                .catch { throwable -> Timber.e(throwable, "Error in sleep timer countdown") }
-                .collectLatest { deadline -> tickSleepTimer(deadline) }
-        }
     }
 
-    override fun handleEvent(event: RadioPlayerEvent) {
+    private val sleepTimerRemaining: Flow<Long?> =
+        player.snapshot
+            .map { it.sleepTimerDeadlineMillis }
+            .distinctUntilChanged()
+            .flatMapLatest { deadline -> sleepTimerCountdown(deadline) }
+            .catch { throwable -> Timber.e(throwable, "Error in sleep timer countdown") }
+
+    val uiState: StateFlow<RadioPlayerUiState> =
+        combine(player.snapshot, sleepTimerRemaining) { snapshot, remaining -> snapshot.toUiState(remaining) }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(stopTimeoutMillis = STOP_TIMEOUT_MILLIS),
+                initialValue = initialUiState,
+            )
+
+    fun handleEvent(event: RadioPlayerEvent) {
         when (event) {
             RadioPlayerEvent.Play -> player.play()
             RadioPlayerEvent.Pause -> player.pause()
@@ -62,31 +58,35 @@ internal class RadioPlayerViewModel(
         }
     }
 
-    private suspend fun tickSleepTimer(deadline: Long?) {
-        if (deadline != null) {
-            var remaining = deadline - clock()
-            while (remaining > ZERO_MILLIS) {
-                updateSleepTimerRemaining(remaining)
-                delay(millisUntilDisplayChange(remaining))
-                remaining = deadline - clock()
+    private fun sleepTimerCountdown(deadline: Long?): Flow<Long?> =
+        flow {
+            if (deadline != null) {
+                var remaining = deadline - clock()
+                while (remaining > ZERO_MILLIS) {
+                    emit(remaining)
+                    delay(millisUntilDisplayChange(remaining))
+                    remaining = deadline - clock()
+                }
             }
+            emit(null)
         }
-        updateSleepTimerRemaining(null)
-    }
 
     private fun millisUntilDisplayChange(remainingMillis: Long): Long =
         if (remainingMillis < MINUTE_MILLIS) remainingMillis else remainingMillis % MINUTE_MILLIS + 1
 
-    private fun updateSleepTimerRemaining(remainingMillis: Long?) {
-        updateUiState {
-            copy {
-                RadioPlayerUiState.sleepTimerRemainingMillis set remainingMillis
-            }
-        }
-    }
+    private fun RadioPlayerSnapshot.toUiState(sleepTimerRemainingMillis: Long?): RadioPlayerUiState =
+        RadioPlayerUiState(
+            stationName = stationName,
+            artworkUri = artworkUri?.toString(),
+            status = status,
+            canPrevious = hasPrevious,
+            canNext = hasNext,
+            sleepTimerRemainingMillis = sleepTimerRemainingMillis,
+        )
 
     private companion object {
         const val ZERO_MILLIS = 0L
         const val MINUTE_MILLIS = 60_000L
+        const val STOP_TIMEOUT_MILLIS = 5_000L
     }
 }
