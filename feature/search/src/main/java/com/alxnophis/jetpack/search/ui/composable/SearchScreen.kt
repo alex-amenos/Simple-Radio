@@ -221,7 +221,7 @@ private fun SearchResults(
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(mediumPadding),
-                verticalArrangement = Arrangement.spacedBy(smallPadding),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 itemsIndexed(items = uiState.stations, key = { _, station -> station.id }) { index, station ->
                     SearchStationItem(

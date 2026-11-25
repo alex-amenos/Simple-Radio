@@ -42,7 +42,6 @@ import com.alxnophis.jetpack.core.ui.composable.CoreEmptyState
 import com.alxnophis.jetpack.core.ui.composable.CoreStationIcon
 import com.alxnophis.jetpack.core.ui.theme.AppTheme
 import com.alxnophis.jetpack.core.ui.theme.mediumPadding
-import com.alxnophis.jetpack.core.ui.theme.smallPadding
 import com.alxnophis.jetpack.favorites.R
 import com.alxnophis.jetpack.favorites.ui.composable.provider.FavoritesPreviewProvider
 import com.alxnophis.jetpack.favorites.ui.contract.FavoritesEvent
@@ -90,7 +89,7 @@ internal fun FavoritesScreen(
                 LazyColumn(
                     modifier = Modifier.padding(innerPadding).fillMaxSize(),
                     contentPadding = PaddingValues(mediumPadding),
-                    verticalArrangement = Arrangement.spacedBy(smallPadding),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     itemsIndexed(items = uiState.stations, key = { _, station -> station.id }) { index, station ->
                         FavoriteStationItem(
