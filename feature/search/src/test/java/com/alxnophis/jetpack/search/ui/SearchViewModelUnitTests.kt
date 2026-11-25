@@ -178,7 +178,7 @@ internal class SearchViewModelUnitTests : BaseViewModelUnitTest() {
 
     // uiState is shared Lazily, so the UI collector is simulated to start it.
     private fun SearchViewModel.subscribed(testScope: TestScope): SearchViewModel =
-        apply { testScope.backgroundScope.launch { uiState.collect {} } }
+        apply { testScope.backgroundScope.launch(start = kotlinx.coroutines.CoroutineStart.UNDISPATCHED) { uiState.collect {} } }
 
     private fun station(id: String) = FavoriteStation(id, "Station $id", "https://example.com/$id", null, "MP3", 128, "Spain")
 
