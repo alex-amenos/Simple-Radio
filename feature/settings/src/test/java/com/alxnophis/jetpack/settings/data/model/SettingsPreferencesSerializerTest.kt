@@ -84,11 +84,12 @@ internal class SettingsPreferencesSerializerTest : BaseUnitTest() {
             val legacyJson =
                 """{"notificationsEnabled":true,"hintsEnabled":true,"marketingOption":false,"themeOption":"DARK"}"""
             val input = ByteArrayInputStream(legacyJson.toByteArray(Charsets.UTF_8))
+            val freshSerializer = SettingsPreferencesSerializer(ioDispatcher = testDispatcher)
 
-            val result = serializer.readFrom(input)
+            val result = freshSerializer.readFrom(input)
 
             result shouldBeEqualTo SettingsPreferencesMother.create(themeOption = SettingsPreferences.ThemeOptions.DARK)
-            serializer.hasLegacyEncryptedData.get() shouldBeEqualTo false
+            freshSerializer.hasLegacyEncryptedData.get() shouldBeEqualTo false
         }
 
     @Test
