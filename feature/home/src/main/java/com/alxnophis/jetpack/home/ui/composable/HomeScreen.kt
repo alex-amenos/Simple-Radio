@@ -65,10 +65,13 @@ internal fun HomeScreen(
                         .consumeWindowInsets(paddingValues)
                         .fillMaxSize(),
             ) {
-                when (uiState.selectedTab) {
-                    HomeTab.Favorites -> favoritesContent()
-                    HomeTab.Search -> searchContent()
-                    HomeTab.Settings -> settingsContent(goToFirstTab)
+                val tabStateHolder = androidx.compose.runtime.saveable.rememberSaveableStateHolder()
+                tabStateHolder.SaveableStateProvider(key = uiState.selectedTab.name) {
+                    when (uiState.selectedTab) {
+                        HomeTab.Favorites -> favoritesContent()
+                        HomeTab.Search -> searchContent()
+                        HomeTab.Settings -> settingsContent(goToFirstTab)
+                    }
                 }
             }
         }
