@@ -16,7 +16,7 @@ internal class HomePreviewProvider : PreviewParameterProvider<HomeUiState> {
                                 name = "Screen 1",
                                 emoji = "🐻",
                                 description = "Lorem ipsum",
-                                feature = Feature.Authentication,
+                                feature = Feature.RadioStreaming,
                             ),
                             NavigationItem(
                                 name = "Screen 2",

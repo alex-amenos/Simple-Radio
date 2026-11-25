@@ -39,7 +39,7 @@ internal class HomeViewModelUnitTests : BaseViewModelUnitTest() {
                         name = "Custom Feature",
                         emoji = "🚀",
                         description = "Custom test description",
-                        feature = Feature.Posts,
+                        feature = Feature.RadioStreaming,
                     ),
                 )
             whenever(getNavigationItemsUseCaseMock()).thenReturn(customItems)

@@ -1,6 +1,0 @@
-apply from: "$rootDir/buildSystem/gradle/common-android-feature.gradle"
-
-android {
-    resourcePrefix = 'ball_clicker'
-    namespace = "com.alxnophis.jetpack.game.ballclicker"
-}

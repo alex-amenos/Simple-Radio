@@ -1,6 +1,0 @@
-apply from: "$rootDir/buildSystem/gradle/common-android-feature.gradle"
-
-android {
-    resourcePrefix = 'authentication'
-    namespace = 'com.alxnophis.jetpack.authentication'
-}

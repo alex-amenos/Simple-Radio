@@ -4,7 +4,6 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
 
 /**
  * Screen Robot for Home Screen
@@ -18,7 +17,6 @@ import androidx.compose.ui.test.performClick
  *     .homeScreen()
  *     .waitForHomeScreen()
  *     .assertHomeDisplayed()
- *     .navigateToPosts()
  * ```
  *
  * ## Pattern Benefits
@@ -28,8 +26,6 @@ import androidx.compose.ui.test.performClick
  * - **Maintainability**: UI changes only require updating the robot
  *
  * @property composeTestRule The Compose test rule for UI interactions
- * @see PostsScreenRobot
- * @see com.alxnophis.jetpack.e2e.PostsJourneyRobotTest
  */
 class HomeScreenRobot(
     private val composeTestRule: ComposeTestRule,
@@ -48,48 +44,6 @@ class HomeScreenRobot(
                 .isNotEmpty()
         }
         return this
-    }
-
-    /**
-     * Navigates from home screen to the posts feature.
-     * Waits for the posts screen to load after navigation.
-     *
-     * @return A new [PostsScreenRobot] instance for continued interaction
-     */
-    fun navigateToPosts(): PostsScreenRobot {
-        composeTestRule
-            .onNodeWithText("Posts")
-            .performClick()
-
-        composeTestRule.waitUntil(timeoutMillis = 10000) {
-            composeTestRule
-                .onAllNodesWithText("Posts")
-                .fetchSemanticsNodes()
-                .isNotEmpty()
-        }
-
-        return PostsScreenRobot(composeTestRule)
-    }
-
-    /**
-     * Navigates from home screen to the movies feature.
-     * Waits for the movies screen to load after navigation.
-     *
-     * @return A new [MoviesScreenRobot] instance for continued interaction
-     */
-    fun navigateToMovies(): MoviesScreenRobot {
-        composeTestRule
-            .onNodeWithText("Movies")
-            .performClick()
-
-        composeTestRule.waitUntil(timeoutMillis = 10000) {
-            composeTestRule
-                .onAllNodesWithText("Search movies")
-                .fetchSemanticsNodes()
-                .isNotEmpty()
-        }
-
-        return MoviesScreenRobot(composeTestRule)
     }
 
     /**
