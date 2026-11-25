@@ -4,8 +4,9 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
+import com.alxnophis.jetpack.ui.tags.HomeTags
 
-private const val HOME_BOTTOM_BAR_TAG = "home_bottom_bar"
+private val HOME_BOTTOM_BAR_TAG = HomeTags.TAG_HOME_BOTTOM_BAR
 
 /**
  * Screen Robot for Home Screen
