@@ -9,8 +9,5 @@ sealed class Route : NavKey {
     data object Home : Route()
 
     @Serializable
-    data object RadioStations : Route()
-
-    @Serializable
     data object RadioPlayer : Route()
 }
