@@ -7,6 +7,7 @@ import arrow.optics.optics
 import com.alxnophis.simpleradio.core.ui.viewmodel.UiEvent
 import com.alxnophis.simpleradio.core.ui.viewmodel.UiState
 import com.alxnophis.simpleradio.search.data.model.Country
+import com.alxnophis.simpleradio.search.ui.model.SearchStationUiModel
 import com.alxnophis.simpleradio.storage.favorites.model.FavoriteStation
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
@@ -43,8 +44,7 @@ internal data class SearchUiState(
     val status: SearchStatus,
     val query: String,
     val selectedCountry: Country?,
-    val countries: ImmutableList<Country>,
-    val stations: ImmutableList<FavoriteStation>,
+    val stations: ImmutableList<SearchStationUiModel>,
     val favoriteIds: ImmutableSet<String>,
 ) : UiState {
     internal companion object {
@@ -53,7 +53,6 @@ internal data class SearchUiState(
                 status = SearchStatus.Loading,
                 query = "",
                 selectedCountry = null,
-                countries = persistentListOf(),
                 stations = persistentListOf(),
                 favoriteIds = persistentSetOf(),
             )

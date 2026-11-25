@@ -8,7 +8,6 @@ import com.alxnophis.simpleradio.api.radiobrowser.RadioBrowserSearchService
 import com.alxnophis.simpleradio.api.radiobrowser.model.CountryApiModel
 import com.alxnophis.simpleradio.api.radiobrowser.model.RadioStationApiModel
 import com.alxnophis.simpleradio.api.testing.CallErrorMother
-import com.alxnophis.simpleradio.search.data.model.Country
 import com.alxnophis.simpleradio.search.data.model.SearchError
 import com.alxnophis.simpleradio.search.data.repository.SearchStationsRepositoryImpl
 import kotlinx.coroutines.test.runTest
@@ -16,25 +15,6 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
 internal class SearchStationsRepositoryImplTest {
-    @Test
-    fun `GIVEN countries from the API WHEN loading THEN only valid ones are returned sorted by name`() =
-        runTest {
-            val service =
-                FakeSearchService(
-                    countries =
-                        listOf(
-                            CountryApiModel(name = "Spain", isoCode = "ES", stationCount = 10),
-                            CountryApiModel(name = "Andorra", isoCode = "AD", stationCount = 2),
-                            CountryApiModel(name = "Empty", isoCode = "EM", stationCount = 0),
-                            CountryApiModel(name = "No code", isoCode = null, stationCount = 5),
-                        ).right(),
-                )
-
-            val result = SearchStationsRepositoryImpl(service).getCountries()
-
-            result shouldBeEqualTo listOf(Country("AD", "Andorra"), Country("ES", "Spain")).right()
-        }
-
     @Test
     fun `GIVEN stations with valid and invalid urls WHEN searching THEN only valid unique stations are returned`() =
         runTest {
@@ -68,7 +48,7 @@ internal class SearchStationsRepositoryImplTest {
     @Test
     fun `GIVEN no connectivity WHEN searching THEN returns NetworkUnavailable`() =
         runTest {
-            val service = FakeSearchService(stations = CallErrorMother.noConnectivityError().left())
+            val service = FakeSearchService(stations = Either.Left(CallErrorMother.noConnectivityError()))
 
             val result = SearchStationsRepositoryImpl(service).searchStations(name = "radio", countryCode = null)
 
@@ -76,11 +56,11 @@ internal class SearchStationsRepositoryImplTest {
         }
 
     @Test
-    fun `GIVEN an HTTP error WHEN loading countries THEN returns ServerError`() =
+    fun `GIVEN a server error WHEN searching THEN returns ServerError`() =
         runTest {
-            val service = FakeSearchService(countries = CallErrorMother.httpError(code = 500).left())
+            val service = FakeSearchService(stations = Either.Left(CallErrorMother.httpError(500)))
 
-            val result = SearchStationsRepositoryImpl(service).getCountries()
+            val result = SearchStationsRepositoryImpl(service).searchStations(name = "radio", countryCode = null)
 
             result shouldBeEqualTo SearchError.ServerError.left()
         }
@@ -88,11 +68,18 @@ internal class SearchStationsRepositoryImplTest {
     private fun apiModel(
         id: String,
         url: String?,
-    ) = RadioStationApiModel(stationUuid = id, name = "Radio $id", urlResolved = url)
+    ) = RadioStationApiModel(
+        stationUuid = id,
+        name = "Station $id",
+        urlResolved = url,
+        favicon = null,
+        codec = "MP3",
+        bitrate = 128,
+        country = "Spain",
+    )
 
     private class FakeSearchService(
-        private val countries: Either<CallError, List<CountryApiModel>> = emptyList<CountryApiModel>().right(),
-        private val stations: Either<CallError, List<RadioStationApiModel>> = emptyList<RadioStationApiModel>().right(),
+        var stations: Either<CallError, List<RadioStationApiModel>> = emptyList<RadioStationApiModel>().right(),
     ) : RadioBrowserSearchService {
         var lastName: String? = null
         var lastCountryCode: String? = null
@@ -100,7 +87,7 @@ internal class SearchStationsRepositoryImplTest {
         override suspend fun getCountries(
             order: String,
             hideBroken: Boolean,
-        ): Either<CallError, List<CountryApiModel>> = countries
+        ): Either<CallError, List<CountryApiModel>> = emptyList<CountryApiModel>().right()
 
         override suspend fun searchStations(
             name: String?,

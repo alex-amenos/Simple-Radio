@@ -6,6 +6,8 @@ android {
 }
 
 dependencies {
+    implementation project(Modules.FEATURE_COUNTRY_SELECTOR)
+    implementation project(Modules.FEATURE_SETTINGS)
     implementation project(Modules.SHARED_API)
     implementation project(Modules.SHARED_STORAGE)
     implementation libs.retrofit
