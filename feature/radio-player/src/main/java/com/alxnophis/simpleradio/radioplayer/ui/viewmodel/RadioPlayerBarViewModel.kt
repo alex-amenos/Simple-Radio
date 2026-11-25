@@ -32,10 +32,10 @@ internal class RadioPlayerBarViewModel(
     fun handleEvent(event: RadioPlayerBarEvent) {
         when (event) {
             RadioPlayerBarEvent.TogglePlayPause -> {
-                if (player.snapshot.value.status == RadioPlaybackStatus.Playing) {
-                    player.pause()
-                } else {
-                    player.play()
+                when (player.snapshot.value.status) {
+                    RadioPlaybackStatus.Playing -> player.pause()
+                    RadioPlaybackStatus.Error -> player.retry()
+                    else -> player.play()
                 }
             }
 
