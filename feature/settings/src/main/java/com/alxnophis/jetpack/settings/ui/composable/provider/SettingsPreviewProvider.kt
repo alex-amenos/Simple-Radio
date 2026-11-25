@@ -1,4 +1,4 @@
-package com.alxnophis.jetpack.settings.ui.composable
+package com.alxnophis.jetpack.settings.ui.composable.provider
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.alxnophis.jetpack.settings.ui.contract.SettingsUiState

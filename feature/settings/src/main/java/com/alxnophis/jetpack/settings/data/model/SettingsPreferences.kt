@@ -74,7 +74,7 @@ internal class SettingsPreferencesSerializer(
                 val preferences = settingsJson.decodeFromString<SettingsPreferences>(decryptedBytes.decodeToString())
                 hasLegacyEncryptedData.set(true)
                 preferences
-            } catch (cryptoException: Exception) {
+            } catch (_: Exception) {
                 throw CorruptionException("Failed to parse or decrypt SettingsPreferences payload", jsonException)
             }
         }

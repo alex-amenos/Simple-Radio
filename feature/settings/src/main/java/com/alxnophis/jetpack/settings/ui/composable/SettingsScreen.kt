@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.alxnophis.jetpack.core.extensions.getVersion
 import com.alxnophis.jetpack.core.ui.theme.AppTheme
 import com.alxnophis.jetpack.settings.R
+import com.alxnophis.jetpack.settings.ui.composable.provider.SettingsPreviewProvider
 import com.alxnophis.jetpack.settings.ui.contract.SettingsUiEvent
 import com.alxnophis.jetpack.settings.ui.contract.SettingsUiState
 
