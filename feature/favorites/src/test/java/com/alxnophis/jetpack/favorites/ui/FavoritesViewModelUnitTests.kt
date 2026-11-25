@@ -55,12 +55,26 @@ internal class FavoritesViewModelUnitTests : BaseViewModelUnitTest() {
         runTest {
             repository.stations.value = listOf(station("1"))
             val viewModel = viewModelMother()
+
+            viewModel.uiState.test {
+                awaitItem().status shouldBeEqualTo FavoritesStatus.Loading
+                testScheduler.advanceUntilIdle()
+                awaitItem().status shouldBeEqualTo FavoritesStatus.Content
+
+                viewModel.handleEvent(FavoritesEvent.Remove("1"))
+                testScheduler.advanceUntilIdle()
+
+                awaitItem().status shouldBeEqualTo FavoritesStatus.Empty
+            }
+        }
+
+    @Test
+    fun `GIVEN no subscribers WHEN view model is created THEN favorites are not observed`() =
+        runTest {
+            viewModelMother()
             testScheduler.advanceUntilIdle()
 
-            viewModel.handleEvent(FavoritesEvent.Remove("1"))
-            testScheduler.advanceUntilIdle()
-
-            viewModel.currentUiState.status shouldBeEqualTo FavoritesStatus.Empty
+            repository.stations.subscriptionCount.value shouldBeEqualTo 0
         }
 
     private fun viewModelMother() =

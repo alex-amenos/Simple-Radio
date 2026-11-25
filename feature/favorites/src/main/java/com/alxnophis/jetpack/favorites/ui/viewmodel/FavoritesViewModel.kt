@@ -1,42 +1,47 @@
 package com.alxnophis.jetpack.favorites.ui.viewmodel
 
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import arrow.optics.copy
-import com.alxnophis.jetpack.core.ui.viewmodel.BaseViewModel
 import com.alxnophis.jetpack.favorites.domain.usecase.ObserveFavoriteStationsUseCase
 import com.alxnophis.jetpack.favorites.domain.usecase.RemoveFavoriteStationUseCase
 import com.alxnophis.jetpack.favorites.ui.contract.FavoritesEvent
 import com.alxnophis.jetpack.favorites.ui.contract.FavoritesStatus
 import com.alxnophis.jetpack.favorites.ui.contract.FavoritesUiState
-import com.alxnophis.jetpack.favorites.ui.contract.stations
-import com.alxnophis.jetpack.favorites.ui.contract.status
 import com.alxnophis.jetpack.storage.favorites.model.FavoriteStation
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 internal class FavoritesViewModel(
-    private val observeFavoriteStations: ObserveFavoriteStationsUseCase,
+    observeFavoriteStations: ObserveFavoriteStationsUseCase,
     private val removeFavoriteStation: RemoveFavoriteStationUseCase,
     initialUiState: FavoritesUiState = FavoritesUiState.initialState,
-) : BaseViewModel<FavoritesEvent, FavoritesUiState>(initialUiState) {
-    init {
-        viewModelScope.launch {
-            observeFavoriteStations().collect { stations -> showStations(stations) }
-        }
-    }
+) : ViewModel() {
+    val uiState: StateFlow<FavoritesUiState> =
+        observeFavoriteStations()
+            .map { stations -> stations.toUiState() }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(stopTimeoutMillis = STOP_TIMEOUT_MILLIS),
+                initialValue = initialUiState,
+            )
 
-    override fun handleEvent(event: FavoritesEvent) {
+    fun handleEvent(event: FavoritesEvent) {
         when (event) {
             is FavoritesEvent.Remove -> viewModelScope.launch { removeFavoriteStation(event.stationId) }
         }
     }
 
-    private fun showStations(stations: List<FavoriteStation>) {
-        updateUiState {
-            copy {
-                FavoritesUiState.stations set stations.toImmutableList()
-                FavoritesUiState.status set if (stations.isEmpty()) FavoritesStatus.Empty else FavoritesStatus.Content
-            }
-        }
+    private fun List<FavoriteStation>.toUiState(): FavoritesUiState =
+        FavoritesUiState(
+            status = if (isEmpty()) FavoritesStatus.Empty else FavoritesStatus.Content,
+            stations = toImmutableList(),
+        )
+
+    private companion object {
+        const val STOP_TIMEOUT_MILLIS = 5_000L
     }
 }
