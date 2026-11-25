@@ -5,7 +5,6 @@ import arrow.core.right
 import com.alxnophis.jetpack.settings.data.model.SettingsPreferences
 import com.alxnophis.jetpack.settings.data.model.SettingsPreferencesMother
 import com.alxnophis.jetpack.settings.data.repository.SettingsRepository
-import com.alxnophis.jetpack.settings.ui.contract.MarketingOption
 import com.alxnophis.jetpack.settings.ui.contract.SettingsUiEvent
 import com.alxnophis.jetpack.settings.ui.contract.SettingsUiState
 import com.alxnophis.jetpack.settings.ui.contract.Theme
@@ -34,9 +33,6 @@ private class SettingsViewModelUnitTests : BaseUnitTest() {
             val settingsPreferencesFlow =
                 flowOf(
                     SettingsPreferencesMother.create(
-                        notificationsEnabled = true,
-                        hintsEnabled = true,
-                        marketingOption = true,
                         themeOption = SettingsPreferences.ThemeOptions.DARK,
                     ),
                 )
@@ -48,59 +44,11 @@ private class SettingsViewModelUnitTests : BaseUnitTest() {
                 awaitItem() shouldBeEqualTo SettingsUiState.initialState
                 awaitItem() shouldBeEqualTo
                     SettingsUiState(
-                        notificationsEnabled = true,
-                        hintsEnabled = true,
-                        marketingOption = MarketingOption.ALLOWED,
                         themeOption = Theme.DARK,
                     )
             }
 
             verify(settingsRepositoryMock).getSettingsFlow()
-        }
-    }
-
-    @Test
-    fun `GIVEN a user updates notification settings WHEN SetNotifications event THEN assert state change`() {
-        runTest {
-            val viewModel = settingsViewModelMother()
-            val settingsPreferencesFlow = flowOf(SettingsPreferencesMother.create())
-            whenever(settingsRepositoryMock.getSettingsFlow()).thenReturn(settingsPreferencesFlow)
-            whenever(settingsRepositoryMock.updateNotificationsEnabled(true)).thenReturn(Unit.right())
-
-            viewModel.handleEvent(SettingsUiEvent.SetNotifications)
-            runCurrent()
-
-            verify(settingsRepositoryMock).updateNotificationsEnabled(true)
-        }
-    }
-
-    @Test
-    fun `GIVEN a user updates hint settings WHEN SetHint event THEN assert state change`() {
-        runTest {
-            val viewModel = settingsViewModelMother()
-            val settingsPreferencesFlow = flowOf(SettingsPreferencesMother.create())
-            whenever(settingsRepositoryMock.getSettingsFlow()).thenReturn(settingsPreferencesFlow)
-            whenever(settingsRepositoryMock.updateHintsEnabled(true)).thenReturn(Unit.right())
-
-            viewModel.handleEvent(SettingsUiEvent.SetHint)
-            runCurrent()
-
-            verify(settingsRepositoryMock).updateHintsEnabled(true)
-        }
-    }
-
-    @Test
-    fun `GIVEN a user updates marketing option WHEN SetMarketingOption event THEN assert state change`() {
-        runTest {
-            val viewModel = settingsViewModelMother()
-            val settingsPreferencesFlow = flowOf(SettingsPreferencesMother.create())
-            whenever(settingsRepositoryMock.getSettingsFlow()).thenReturn(settingsPreferencesFlow)
-            whenever(settingsRepositoryMock.updateMarketingOption(true)).thenReturn(Unit.right())
-
-            viewModel.handleEvent(SettingsUiEvent.SetMarketingOption(MarketingOption.ALLOWED))
-            runCurrent()
-
-            verify(settingsRepositoryMock).updateMarketingOption(true)
         }
     }
 
@@ -133,18 +81,12 @@ private class SettingsViewModelUnitTests : BaseUnitTest() {
                 runCurrent()
                 val updatedPrefs =
                     SettingsPreferencesMother.create(
-                        notificationsEnabled = true,
-                        hintsEnabled = false,
-                        marketingOption = true,
                         themeOption = SettingsPreferences.ThemeOptions.DARK,
                     )
                 settingsFlow.emit(updatedPrefs)
                 runCurrent()
                 awaitItem() shouldBeEqualTo
                     SettingsUiState(
-                        notificationsEnabled = true,
-                        hintsEnabled = false,
-                        marketingOption = MarketingOption.ALLOWED,
                         themeOption = Theme.DARK,
                     )
             }
@@ -155,9 +97,6 @@ private class SettingsViewModelUnitTests : BaseUnitTest() {
             viewModel.uiState.test {
                 awaitItem() shouldBeEqualTo
                     SettingsUiState(
-                        notificationsEnabled = true,
-                        hintsEnabled = false,
-                        marketingOption = MarketingOption.ALLOWED,
                         themeOption = Theme.DARK,
                     )
                 expectNoEvents()

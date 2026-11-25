@@ -1,6 +1,5 @@
 package com.alxnophis.jetpack.settings.ui.composable
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -16,12 +15,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.alxnophis.jetpack.core.extensions.getVersion
 import com.alxnophis.jetpack.core.ui.theme.AppTheme
-import com.alxnophis.jetpack.settings.R
 import com.alxnophis.jetpack.settings.ui.contract.SettingsUiEvent
 import com.alxnophis.jetpack.settings.ui.contract.SettingsUiState
 
@@ -32,7 +29,6 @@ internal fun SettingsScreen(
     appVersion: String = LocalContext.current.getVersion(),
 ) {
     AppTheme {
-        val context = LocalContext.current
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             contentWindowInsets = WindowInsets.safeDrawing,
@@ -45,42 +41,6 @@ internal fun SettingsScreen(
                         .background(MaterialTheme.colorScheme.surface)
                         .verticalScroll(rememberScrollState()),
             ) {
-                SettingsNotificationItem(
-                    modifier = Modifier.fillMaxWidth(),
-                    title = stringResource(id = R.string.settings_option_notifications),
-                    checked = state.notificationsEnabled,
-                    onToggleNotificationSettings = { onEvent(SettingsUiEvent.SetNotifications) },
-                )
-                HorizontalDivider()
-                SettingsHintItem(
-                    modifier = Modifier.fillMaxWidth(),
-                    title = stringResource(id = R.string.settings_option_hints),
-                    checked = state.hintsEnabled,
-                    onShowHintToggled = { onEvent(SettingsUiEvent.SetHint) },
-                )
-                HorizontalDivider()
-                SettingsManageSubscriptionItem(
-                    modifier = Modifier.fillMaxWidth(),
-                    title = stringResource(id = R.string.settings_option_manage_subscription),
-                    onSubscriptionClicked = {
-                        Toast
-                            .makeText(context, R.string.settings_option_manage_subscription, Toast.LENGTH_LONG)
-                            .show()
-                        onEvent(SettingsUiEvent.ManageSubscription)
-                    },
-                )
-                HorizontalDivider()
-                SettingsSectionSpacer(
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                SettingsMarketingItem(
-                    modifier = Modifier.fillMaxWidth(),
-                    selectedOption = state.marketingOption,
-                    onOptionSelected = { marketingOption ->
-                        onEvent(SettingsUiEvent.SetMarketingOption(marketingOption))
-                    },
-                )
-                HorizontalDivider()
                 SettingsThemeItem(
                     modifier = Modifier.fillMaxWidth(),
                     selectedTheme = state.themeOption,

@@ -17,9 +17,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 @Serializable
 data class SettingsPreferences(
-    val notificationsEnabled: Boolean,
-    val hintsEnabled: Boolean,
-    val marketingOption: Boolean,
     val themeOption: ThemeOptions,
 ) {
     @Serializable
@@ -34,9 +31,6 @@ data class SettingsPreferences(
     companion object {
         val default =
             SettingsPreferences(
-                notificationsEnabled = false,
-                hintsEnabled = false,
-                marketingOption = true,
                 themeOption = ThemeOptions.SYSTEM,
             )
     }
@@ -48,6 +42,7 @@ data class SettingsPreferences(
  * Persists settings as UTF-8 plaintext JSON for cold startup performance.
  * On first upgrade from legacy encrypted versions, it decrypts using [Crypto]
  * and flags [hasLegacyEncryptedData] so DataStore migrations rewrite plaintext atomically.
+ * Unknown keys (e.g. removed preferences persisted by older app versions) are ignored.
  */
 internal class SettingsPreferencesSerializer(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -68,7 +63,7 @@ internal class SettingsPreferencesSerializer(
             }
         if (text.isBlank()) return defaultValue
         return try {
-            Json.decodeFromString(text)
+            settingsJson.decodeFromString(text)
         } catch (jsonException: Exception) {
             try {
                 val encryptedBytesDecoded =
@@ -76,7 +71,7 @@ internal class SettingsPreferencesSerializer(
                         .getDecoder()
                         .decode(text)
                 val decryptedBytes = decryptPayload(encryptedBytesDecoded)
-                val preferences = Json.decodeFromString<SettingsPreferences>(decryptedBytes.decodeToString())
+                val preferences = settingsJson.decodeFromString<SettingsPreferences>(decryptedBytes.decodeToString())
                 hasLegacyEncryptedData.set(true)
                 preferences
             } catch (cryptoException: Exception) {
@@ -89,7 +84,7 @@ internal class SettingsPreferencesSerializer(
         t: SettingsPreferences,
         output: OutputStream,
     ) {
-        val json = Json.encodeToString(t)
+        val json = settingsJson.encodeToString(t)
         withContext(ioDispatcher) {
             output.use {
                 it.write(json.toByteArray(Charsets.UTF_8))
@@ -97,3 +92,5 @@ internal class SettingsPreferencesSerializer(
         }
     }
 }
+
+private val settingsJson = Json { ignoreUnknownKeys = true }

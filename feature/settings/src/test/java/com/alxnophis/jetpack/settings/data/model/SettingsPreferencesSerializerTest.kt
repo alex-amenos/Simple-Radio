@@ -27,9 +27,6 @@ internal class SettingsPreferencesSerializerTest : BaseUnitTest() {
         runTest {
             val original =
                 SettingsPreferencesMother.create(
-                    notificationsEnabled = true,
-                    hintsEnabled = true,
-                    marketingOption = false,
                     themeOption = SettingsPreferences.ThemeOptions.DARK,
                 )
             val output = ByteArrayOutputStream()
@@ -57,9 +54,6 @@ internal class SettingsPreferencesSerializerTest : BaseUnitTest() {
         runTest {
             val expected =
                 SettingsPreferencesMother.create(
-                    notificationsEnabled = true,
-                    hintsEnabled = false,
-                    marketingOption = true,
                     themeOption = SettingsPreferences.ThemeOptions.LIGHT,
                 )
             val expectedJsonBytes =
@@ -82,6 +76,19 @@ internal class SettingsPreferencesSerializerTest : BaseUnitTest() {
 
             result shouldBeEqualTo expected
             serializer.hasLegacyEncryptedData.get() shouldBeEqualTo true
+        }
+
+    @Test
+    fun `GIVEN payload with removed preferences WHEN readFrom THEN unknown keys are ignored`() =
+        runTest {
+            val legacyJson =
+                """{"notificationsEnabled":true,"hintsEnabled":true,"marketingOption":false,"themeOption":"DARK"}"""
+            val input = ByteArrayInputStream(legacyJson.toByteArray(Charsets.UTF_8))
+
+            val result = serializer.readFrom(input)
+
+            result shouldBeEqualTo SettingsPreferencesMother.create(themeOption = SettingsPreferences.ThemeOptions.DARK)
+            serializer.hasLegacyEncryptedData.get() shouldBeEqualTo false
         }
 
     @Test
