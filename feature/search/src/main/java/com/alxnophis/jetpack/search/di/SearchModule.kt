@@ -18,5 +18,5 @@ val searchModule: Module =
         factory { SearchStationsUseCase(get()) }
         factory { ObserveFavoriteIdsUseCase(get()) }
         factory { SetStationFavoriteUseCase(get()) }
-        viewModel { SearchViewModel(get(), get(), get(), get()) }
+        viewModel { SearchViewModel(get(), get(), get(), get(), get()) }
     }
