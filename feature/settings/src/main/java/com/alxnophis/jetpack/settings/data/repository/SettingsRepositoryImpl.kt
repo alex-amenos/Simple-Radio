@@ -60,21 +60,6 @@ internal class SettingsRepositoryImpl(
                 }
             }
 
-    override suspend fun updateNotificationsEnabled(enabled: Boolean): Either<SettingsPreferencesError, Unit> =
-        updatePreference {
-            it.copy(notificationsEnabled = enabled)
-        }
-
-    override suspend fun updateHintsEnabled(enabled: Boolean): Either<SettingsPreferencesError, Unit> =
-        updatePreference {
-            it.copy(hintsEnabled = enabled)
-        }
-
-    override suspend fun updateMarketingOption(enabled: Boolean): Either<SettingsPreferencesError, Unit> =
-        updatePreference {
-            it.copy(marketingOption = enabled)
-        }
-
     override suspend fun updateThemeOption(themeOption: SettingsPreferences.ThemeOptions): Either<SettingsPreferencesError, Unit> =
         updatePreference {
             it.copy(themeOption = themeOption)
