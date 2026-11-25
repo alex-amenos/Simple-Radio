@@ -198,10 +198,10 @@ private fun FavoriteStationItem(
                     onClick = onRequestRemove,
                     modifier =
                         Modifier
-                            .align(Alignment.TopEnd)
+                            .align(Alignment.TopStart)
                             .background(
                                 color = Color.Black.copy(alpha = 0.5f),
-                                shape = RoundedCornerShape(bottomStart = 12.dp),
+                                shape = RoundedCornerShape(bottomEnd = 12.dp),
                             ).size(36.dp),
                 ) {
                     Icon(
