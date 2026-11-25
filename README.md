@@ -5,20 +5,6 @@ A simple internet radio app for Android, built with modern Android development p
 ## 📚 Documentation
 
 * **[Project Setup Guide](./docs/SETUP.md):** Step-by-step instructions for configuring and running the app.
-* **[Architecture Overview](https://deepwiki.com/alex-amenos/Simple-Radio):** Deep dive into the project's architectural decisions.
-
-## 🛠️ Tech Stack & Architecture
-
-Built with modern Android development practices in mind:
-
-* **UI:** Jetpack Compose
-* **Language:** Kotlin & Coroutines/Flows
-* **Architecture:** MVI (Model-View-Intent)
-* **Functional Programming:** Arrow-kt (`Either`, Optics)
-* **Dependency Injection:** Koin
-* **Networking:** Retrofit
-* **Testing:** JUnit 5, Turbine, Roborazzi (Screenshot Testing)
-* **Modularization:** Multi-module architecture by feature
 
 ## 🚦 Project Status
 
