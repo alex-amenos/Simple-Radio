@@ -59,7 +59,6 @@ fun Navigation(
 
     var searchCountryResult by remember { mutableStateOf<Country?>(null) }
     var hasNewSearchCountry by remember { mutableStateOf(false) }
-
     var settingsCountryResult by remember { mutableStateOf<Pair<String?, String?>?>(null) }
     var hasNewSettingsCountry by remember { mutableStateOf(false) }
 
@@ -119,6 +118,7 @@ fun Navigation(
                                 },
                                 selectedCountry = searchCountryResult,
                                 hasNewCountrySelection = hasNewSearchCountry,
+                                onCountrySelectionConsumed = { hasNewSearchCountry = false },
                             )
                         },
                         settingsContent = {
@@ -133,6 +133,7 @@ fun Navigation(
                                 },
                                 selectedCountry = settingsCountryResult,
                                 hasNewCountrySelection = hasNewSettingsCountry,
+                                onCountrySelectionConsumed = { hasNewSettingsCountry = false },
                             )
                         },
                         onBack = onBack,

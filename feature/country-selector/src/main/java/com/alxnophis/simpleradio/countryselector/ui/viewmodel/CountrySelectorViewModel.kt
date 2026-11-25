@@ -39,7 +39,10 @@ internal class CountrySelectorViewModel(
                     filterCountries(event.query)
                 }
             }
-            CountrySelectorEvent.Retry -> loadCountries()
+
+            CountrySelectorEvent.Retry -> {
+                loadCountries()
+            }
         }
     }
 

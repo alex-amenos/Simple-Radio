@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import com.alxnophis.simpleradio.core.ui.theme.mediumPadding
 import com.alxnophis.simpleradio.settings.R
@@ -33,10 +34,14 @@ internal fun SettingsCountryItem(
                 text = stringResource(R.string.settings_option_default_country),
             )
             Text(
-                modifier = Modifier.testTag(SettingsTags.TAG_COUNTRY),
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .testTag(SettingsTags.TAG_COUNTRY),
                 text = selectedCountryName ?: stringResource(R.string.settings_country_all),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.End,
             )
         }
     }
