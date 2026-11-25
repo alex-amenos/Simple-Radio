@@ -11,8 +11,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 
 internal class RootViewModel(
-    private val settingsRepository: SettingsRepository,
-    private val networkMonitor: NetworkMonitor,
+    settingsRepository: SettingsRepository,
+    networkMonitor: NetworkMonitor,
     initialState: RootUiState = RootUiState.initialState,
 ) : ViewModel() {
     val uiState: StateFlow<RootUiState> =
