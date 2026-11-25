@@ -4,6 +4,7 @@ import com.alxnophis.simpleradio.radioplayer.playback.RadioPlayback
 import com.alxnophis.simpleradio.radioplayer.playback.RadioPlaybackImpl
 import com.alxnophis.simpleradio.radioplayer.playback.RadioPlayer
 import com.alxnophis.simpleradio.radioplayer.playback.RadioPlayerController
+import com.alxnophis.simpleradio.radioplayer.ui.viewmodel.RadioPlayerBarViewModel
 import com.alxnophis.simpleradio.radioplayer.ui.viewmodel.RadioPlayerViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.Module
@@ -17,4 +18,5 @@ val radioPlayerModule: Module =
         single<RadioPlayback> { RadioPlaybackImpl(get()) }
 
         viewModel { RadioPlayerViewModel(get()) }
+        viewModel { RadioPlayerBarViewModel(get()) }
     }

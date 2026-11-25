@@ -2,6 +2,7 @@ package com.alxnophis.simpleradio.home.ui.composable
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,6 +37,7 @@ internal fun HomeScreen(
     searchContent: @Composable () -> Unit,
     settingsContent: @Composable () -> Unit,
     onBack: () -> Unit,
+    miniPlayerContent: @Composable () -> Unit = {},
 ) {
     val goToFirstTab = { handleEvent(HomeEvent.SelectTab(HomeTab.Favorites)) }
     BackHandler {
@@ -46,15 +48,18 @@ internal fun HomeScreen(
             modifier = Modifier.fillMaxSize(),
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
             bottomBar = {
-                NavigationBar(modifier = Modifier.testTag(HomeTags.TAG_HOME_BOTTOM_BAR)) {
-                    HomeTab.entries.forEach { tab ->
-                        val label = stringResource(tab.labelRes())
-                        NavigationBarItem(
-                            selected = uiState.selectedTab == tab,
-                            onClick = { handleEvent(HomeEvent.SelectTab(tab)) },
-                            icon = { Icon(imageVector = tab.icon(), contentDescription = null) },
-                            label = { Text(text = label) },
-                        )
+                Column {
+                    miniPlayerContent()
+                    NavigationBar(modifier = Modifier.testTag(HomeTags.TAG_HOME_BOTTOM_BAR)) {
+                        HomeTab.entries.forEach { tab ->
+                            val label = stringResource(tab.labelRes())
+                            NavigationBarItem(
+                                selected = uiState.selectedTab == tab,
+                                onClick = { handleEvent(HomeEvent.SelectTab(tab)) },
+                                icon = { Icon(imageVector = tab.icon(), contentDescription = null) },
+                                label = { Text(text = label) },
+                            )
+                        }
                     }
                 }
             },
