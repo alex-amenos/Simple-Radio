@@ -27,15 +27,21 @@ fun CoreStationIcon(
     if (faviconUrl.isNullOrBlank()) {
         StationIconFallback(size = size, shape = shape, modifier = modifier)
     } else {
+        val imageLoaded = androidx.compose.runtime.remember(faviconUrl) { androidx.compose.runtime.mutableStateOf(false) }
         Box(
             modifier = modifier,
             contentAlignment = Alignment.Center,
         ) {
-            StationIconFallback(size = size, shape = shape)
+            if (!imageLoaded.value) {
+                StationIconFallback(size = size, shape = shape)
+            }
             AsyncImage(
                 model = faviconUrl,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
+                onLoading = { imageLoaded.value = false },
+                onSuccess = { imageLoaded.value = true },
+                onError = { imageLoaded.value = false },
                 modifier =
                     Modifier
                         .size(size)
