@@ -25,6 +25,7 @@ include ":app"
 include ':shared:api'
 include ":shared:core"
 include ':shared:kotlin'
+include ':shared:storage'
 include ':shared:testing'
 
 // Feature modules
