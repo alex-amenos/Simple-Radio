@@ -2,6 +2,8 @@ package com.alxnophis.jetpack.radio.di
 
 import com.alxnophis.jetpack.radio.data.repository.RadioStationsRepositoryImpl
 import com.alxnophis.jetpack.radio.data.repository.RadioStationsRepository
+import com.alxnophis.jetpack.radio.playback.RadioPlayback
+import com.alxnophis.jetpack.radio.playback.RadioPlaybackImpl
 import com.alxnophis.jetpack.radio.playback.RadioPlayer
 import com.alxnophis.jetpack.radio.playback.RadioPlayerController
 import com.alxnophis.jetpack.radio.ui.viewmodel.RadioPlayerViewModel
@@ -15,6 +17,7 @@ import org.koin.dsl.module
 val radioModule: Module =
     module {
         single { RadioPlayerController(androidContext()) } bind RadioPlayer::class
+        single<RadioPlayback> { RadioPlaybackImpl(get()) }
         single<RadioStationsRepository> { RadioStationsRepositoryImpl(get()) }
 
         viewModel { RadioStationListViewModel(get(), get()) }

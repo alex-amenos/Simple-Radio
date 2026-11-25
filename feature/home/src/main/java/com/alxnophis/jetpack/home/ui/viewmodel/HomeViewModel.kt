@@ -1,14 +1,17 @@
 package com.alxnophis.jetpack.home.ui.viewmodel
 
-import androidx.lifecycle.ViewModel
-import com.alxnophis.jetpack.core.extensions.asStateFlow
-import com.alxnophis.jetpack.home.domain.usecase.GetNavigationItemsUseCase
+import arrow.optics.copy
+import com.alxnophis.jetpack.core.ui.viewmodel.BaseViewModel
+import com.alxnophis.jetpack.home.ui.contract.HomeEvent
 import com.alxnophis.jetpack.home.ui.contract.HomeUiState
-import kotlinx.coroutines.flow.StateFlow
+import com.alxnophis.jetpack.home.ui.contract.selectedTab
 
 internal class HomeViewModel(
-    getNavigationItemsUseCase: GetNavigationItemsUseCase,
-    initialState: HomeUiState = HomeUiState(navigationItems = getNavigationItemsUseCase()),
-) : ViewModel() {
-    val uiState: StateFlow<HomeUiState> = initialState.asStateFlow()
+    initialUiState: HomeUiState = HomeUiState.initialState,
+) : BaseViewModel<HomeEvent, HomeUiState>(initialUiState) {
+    override fun handleEvent(event: HomeEvent) {
+        when (event) {
+            is HomeEvent.SelectTab -> updateUiState { copy { HomeUiState.selectedTab set event.tab } }
+        }
+    }
 }

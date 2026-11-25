@@ -2,6 +2,7 @@ package com.alxnophis.jetpack.radio.data.mapper
 
 import com.alxnophis.jetpack.api.radiobrowser.model.RadioStationApiModel
 import com.alxnophis.jetpack.radio.data.model.RadioStation
+import com.alxnophis.jetpack.storage.favorites.model.FavoriteStation
 
 private const val HTTPS_SCHEME = "https"
 
@@ -17,3 +18,13 @@ internal fun RadioStationApiModel.toRadioStationOrNull(): RadioStation? {
         bitrate = bitrate,
     )
 }
+
+internal fun FavoriteStation.toRadioStation(): RadioStation =
+    RadioStation(
+        id = id,
+        name = name,
+        streamUrl = streamUrl,
+        faviconUrl = faviconUrl,
+        codec = codec,
+        bitrate = bitrate,
+    )

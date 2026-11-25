@@ -2,8 +2,10 @@ package com.alxnophis.jetpack.robot
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeTestRule
-import androidx.compose.ui.test.onAllNodesWithText
-import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onNodeWithTag
+
+private const val HOME_BOTTOM_BAR_TAG = "home_bottom_bar"
 
 /**
  * Screen Robot for Home Screen
@@ -39,7 +41,7 @@ class HomeScreenRobot(
     fun waitForHomeScreen(timeoutMillis: Long = 5000): HomeScreenRobot {
         composeTestRule.waitUntil(timeoutMillis) {
             composeTestRule
-                .onAllNodesWithText("Jetpack Project")
+                .onAllNodesWithTag(HOME_BOTTOM_BAR_TAG)
                 .fetchSemanticsNodes()
                 .isNotEmpty()
         }
@@ -53,7 +55,7 @@ class HomeScreenRobot(
      */
     fun assertHomeDisplayed(): HomeScreenRobot {
         composeTestRule
-            .onNodeWithText("Jetpack Project")
+            .onNodeWithTag(HOME_BOTTOM_BAR_TAG)
             .assertIsDisplayed()
         return this
     }
