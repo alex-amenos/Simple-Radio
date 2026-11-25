@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="country_selector_title">Select country</string>
+    <string name="country_selector_search_hint">Search country</string>
+    <string name="country_selector_all_countries">All countries</string>
+    <string name="country_selector_empty">No countries found</string>
+    <string name="country_selector_error">Failed to load countries</string>
+    <string name="country_selector_retry">Retry</string>
+    <string name="country_selector_cd_back">Back</string>
+    <string name="country_selector_cd_clear">Clear search</string>
+</resources>

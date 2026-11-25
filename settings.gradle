@@ -29,6 +29,7 @@ include ':shared:storage'
 include ':shared:testing'
 
 // Feature modules
+include ':feature:country-selector'
 include ':feature:root'
 include ':feature:favorites'
 include ':feature:home'
