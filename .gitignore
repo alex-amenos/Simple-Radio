@@ -107,3 +107,4 @@ gen-external-apklibs
 ### Gemfile
 Gemfile.lock
 /.superpowers/
+gradle/gradle-daemon-jvm.properties
