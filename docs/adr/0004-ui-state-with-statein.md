@@ -1,6 +1,6 @@
 # ADR 0004: Deriving UiState with `stateIn` in ViewModels
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-11-25
 - **Deciders:** Architecture Team
 
@@ -257,6 +257,14 @@ internal class HomeViewModel(private val savedStateHandle: SavedStateHandle) : V
 4. Keep the contracts (`UiState`, `UiEvent`, `@optics` data classes) unchanged. The composables keep calling `viewModel.uiState.collectAsStateWithLifecycle()`, so the UI does not change.
 5. Keep `BaseViewModel` for purely event-driven screens (`HomeViewModel`) unless the `SavedStateHandle` option is chosen.
 6. Ship one PR per ViewModel, smallest first: Favorites, then Radio player, then Search.
+
+## Implementation
+
+- `FavoritesViewModel`: #13
+- `RadioPlayerViewModel`: #14
+- `SearchViewModel` with `SavedStateHandle`: #15
+
+In the implementation, the `SearchViewModel` initial value already includes the restored query and country, so the text field shows them before the first emission. `HomeViewModel` stays on `BaseViewModel`.
 
 ## Consequences and risks
 
