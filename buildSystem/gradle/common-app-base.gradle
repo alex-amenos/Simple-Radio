@@ -72,7 +72,7 @@ android {
 
 androidComponents.onVariants(androidComponents.selector().all()) { variant ->
     variant.outputs.forEach { output ->
-        def projectName = "jetpack"
+        def projectName = "simpleradio"
         def apkExtension = ".apk"
         def SEP = "_"
         def variantName = variant.name

@@ -3,4 +3,4 @@
 -dontwarn androidx.room.paging.**
 
 ### Module
--keep class com.alxnophis.jetpack.storage.** { *; }
+-keep class com.alxnophis.simpleradio.storage.** { *; }

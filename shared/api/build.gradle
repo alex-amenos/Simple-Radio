@@ -3,7 +3,7 @@ apply from: "$rootDir/buildSystem/gradle/common-android-shared.gradle"
 def tmdbApiToken = (project.findProperty('THEMOVIEDB_ORG_API_TOKEN') ?: "").toString()
 
 android {
-    namespace = 'com.alxnophis.jetpack.api'
+    namespace = 'com.alxnophis.simpleradio.api'
 
     buildFeatures {
         buildConfig = true

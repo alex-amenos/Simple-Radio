@@ -73,4 +73,4 @@
 -keep class arrow.core.** { *; }
 
 ### Module
--keep class com.alxnophis.jetpack.api.** { *; }
+-keep class com.alxnophis.simpleradio.api.** { *; }

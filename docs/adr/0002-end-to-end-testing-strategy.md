@@ -8,7 +8,7 @@
 
 ## Context
 
-The Jetpack application is structured as a multi-module project where `:feature:*` modules are independent, vertical slices that must not depend on each other. However, validating critical user journeys requires executing flows that cross multiple features (e.g., Home → Posts list → Post detail → Back navigation) against `RootActivity`.
+The Simple Radio application is structured as a multi-module project where `:feature:*` modules are independent, vertical slices that must not depend on each other. However, validating critical user journeys requires executing flows that cross multiple features (e.g., Home → Posts list → Post detail → Back navigation) against `RootActivity`.
 
 Additionally, Jetpack Compose UI tests can easily become brittle if they depend on localized user-facing strings or accessibility properties (`contentDescription`), or if interactions are duplicated across multiple test classes without abstraction.
 
@@ -22,7 +22,7 @@ Additionally, Jetpack Compose UI tests can easily become brittle if they depend 
    - The `:app` module already has access to all feature dependencies and `RootActivity`, eliminating circular dependency risks.
 
 2. **Adopt the Screen Robot Pattern (Page Object Model):**
-   - UI interactions and assertions are encapsulated into dedicated, fluent robot classes per screen under `app/src/androidTest/java/com/alxnophis/jetpack/robot/` (e.g., `HomeScreenRobot`, `PostsScreenRobot`, `PostDetailScreenRobot`).
+   - UI interactions and assertions are encapsulated into dedicated, fluent robot classes per screen under `app/src/androidTest/java/com/alxnophis/simpleradio/robot/` (e.g., `HomeScreenRobot`, `PostsScreenRobot`, `PostDetailScreenRobot`).
    - Tests read as declarative user stories:
      ```kotlin
      composeTestRule
@@ -64,11 +64,11 @@ Additionally, Jetpack Compose UI tests can easily become brittle if they depend 
 ./gradlew :app:connectedDebugAndroidTest
 
 # Run a specific journey test class
-./gradlew :app:connectedDebugAndroidTest --tests "com.alxnophis.jetpack.e2e.PostsJourneyRobotTest"
+./gradlew :app:connectedDebugAndroidTest --tests "com.alxnophis.simpleradio.e2e.PostsJourneyRobotTest"
 
 # Run a specific test method
 ./gradlew :app:connectedDebugAndroidTest \
-  --tests "com.alxnophis.jetpack.e2e.PostsJourneyRobotTest.GIVEN_app_launches_WHEN_navigate_to_posts_THEN_posts_are_displayed"
+  --tests "com.alxnophis.simpleradio.e2e.PostsJourneyRobotTest.GIVEN_app_launches_WHEN_navigate_to_posts_THEN_posts_are_displayed"
 ```
 
 ---

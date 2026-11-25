@@ -16,7 +16,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Jetpack"
+rootProject.name = "Simple-Radio"
 
 // App modules
 include ":app"

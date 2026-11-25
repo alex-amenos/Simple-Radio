@@ -2,7 +2,7 @@ apply from: "$rootDir/buildSystem/gradle/common-android-feature.gradle"
 
 android {
     resourcePrefix = 'settings'
-    namespace = 'com.alxnophis.jetpack.settings'
+    namespace = 'com.alxnophis.simpleradio.settings'
 }
 
 dependencies {

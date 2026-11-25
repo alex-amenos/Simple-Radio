@@ -48,7 +48,7 @@ Simple Radio: multi-module Android internet radio app using Kotlin, Jetpack Comp
 ## Architecture & Code Conventions
 
 ### MVI & Functional Programming
-- **BaseViewModel:** Feature ViewModels with complex interactive screens and event pipelines extend `com.alxnophis.jetpack.core.ui.viewmodel.BaseViewModel<Event, State>`. Override `handleEvent(event: Event)` to process actions.
+- **BaseViewModel:** Feature ViewModels with complex interactive screens and event pipelines extend `com.alxnophis.simpleradio.core.ui.viewmodel.BaseViewModel<Event, State>`. Override `handleEvent(event: Event)` to process actions.
 - **StateFlow with `stateIn` (Standard ViewModel):** Simpler ViewModels or root/orchestration ViewModels that derive and combine reactive state directly from flows/repositories (such as `SettingsViewModel` and `RootViewModel`) use standard Android `androidx.lifecycle.ViewModel` with `stateIn(scope = viewModelScope, started = SharingStarted.WhileSubscribed(5_000), initialValue = ...)` rather than `BaseViewModel`.
 - **Error Handling:** Use Arrow's `Either<Error, Data>`. Domain errors are modeled as sealed interfaces (e.g., `SearchError`). Avoid throwing exceptions for business logic; use `.mapLeft` / `.fold`.
 - **State Management:** Use Arrow Optics (`@optics` + `updateCopy`) for complex immutable state updates in ViewModels, preferring this over standard data class `copy()` methods.
@@ -78,7 +78,7 @@ The application is structured into three main types of modules to enforce separa
 - **Imports:** No wildcard imports. Group imports alphabetically:
   1. Android (`android.*`, `androidx.*`)
   2. Third-party (`arrow.*`, `kotlinx.*`, `org.koin.*`, etc.)
-  3. Project imports (`com.alxnophis.jetpack.*`)
+  3. Project imports (`com.alxnophis.simpleradio.*`)
 - **Naming:** 
   - `ktlint_function_naming_ignore_when_annotated_with = Composable`
   - ViewModels: `{Feature}ViewModel`
