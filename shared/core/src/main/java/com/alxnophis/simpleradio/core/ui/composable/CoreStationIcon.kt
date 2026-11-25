@@ -15,7 +15,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
-import coil.compose.SubcomposeAsyncImage
+import coil.compose.AsyncImage
 
 @Composable
 fun CoreStationIcon(
@@ -24,20 +24,24 @@ fun CoreStationIcon(
     modifier: Modifier = Modifier,
 ) {
     val shape = RoundedCornerShape(size / 4)
-    if (faviconUrl == null) {
+    if (faviconUrl.isNullOrBlank()) {
         StationIconFallback(size = size, shape = shape, modifier = modifier)
     } else {
-        SubcomposeAsyncImage(
-            model = faviconUrl,
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier =
-                modifier
-                    .size(size)
-                    .clip(shape),
-            loading = { StationIconFallback(size = size, shape = shape) },
-            error = { StationIconFallback(size = size, shape = shape) },
-        )
+        Box(
+            modifier = modifier,
+            contentAlignment = Alignment.Center,
+        ) {
+            StationIconFallback(size = size, shape = shape)
+            AsyncImage(
+                model = faviconUrl,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier =
+                    Modifier
+                        .size(size)
+                        .clip(shape),
+            )
+        }
     }
 }
 
