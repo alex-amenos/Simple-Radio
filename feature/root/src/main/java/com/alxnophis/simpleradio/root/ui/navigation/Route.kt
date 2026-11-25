@@ -10,4 +10,16 @@ sealed class Route : NavKey {
 
     @Serializable
     data object RadioPlayer : Route()
+
+    @Serializable
+    data class CountrySelector(
+        val selectedCountryCode: String?,
+        val caller: CountrySelectorCaller,
+    ) : Route()
+
+    @Serializable
+    enum class CountrySelectorCaller {
+        SEARCH,
+        SETTINGS,
+    }
 }

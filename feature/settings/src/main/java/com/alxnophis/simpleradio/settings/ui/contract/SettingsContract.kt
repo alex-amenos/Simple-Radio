@@ -12,17 +12,26 @@ internal sealed class SettingsUiEvent : UiEvent {
     data class SetTheme(
         val theme: Theme,
     ) : SettingsUiEvent()
+
+    data class SetDefaultCountry(
+        val countryCode: String?,
+        val countryName: String?,
+    ) : SettingsUiEvent()
 }
 
 @optics
 @Immutable
 internal data class SettingsUiState(
     val themeOption: Theme,
+    val defaultCountryCode: String? = null,
+    val defaultCountryName: String? = null,
 ) : UiState {
     internal companion object {
         val initialState =
             SettingsUiState(
                 themeOption = Theme.SYSTEM,
+                defaultCountryCode = null,
+                defaultCountryName = null,
             )
     }
 }

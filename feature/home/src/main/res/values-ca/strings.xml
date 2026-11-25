@@ -1,0 +1,5 @@
+<resources>
+    <string name="home_tab_favorites">Preferits</string>
+    <string name="home_tab_search">Cerca</string>
+    <string name="home_tab_settings">Configuració</string>
+</resources>

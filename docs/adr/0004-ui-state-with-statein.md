@@ -29,12 +29,12 @@ None of these ViewModels pass a `SavedStateHandle` to `BaseViewModel` today. Mov
 
 ## Review of current ViewModels
 
-| ViewModel | Recommendation | Sharing strategy |
-|---|---|---|
-| `FavoritesViewModel` | Plain `ViewModel` + `stateIn`. Best fit. | `WhileSubscribed(5_000)` |
-| `RadioPlayerViewModel` | Plain `ViewModel` + `combine` + `stateIn`. | `WhileSubscribed(5_000)` |
-| `SearchViewModel` | Plain `ViewModel` + declarative pipeline + `stateIn`, with the request in `SavedStateHandle`. | `Lazily` (see below) |
-| `HomeViewModel` | Keep it. Optionally use `SavedStateHandle.getStateFlow`. | n/a |
+| ViewModel              | Recommendation                                                                                | Sharing strategy         |
+|------------------------|-----------------------------------------------------------------------------------------------|--------------------------|
+| `FavoritesViewModel`   | Plain `ViewModel` + `stateIn`. Best fit.                                                      | `WhileSubscribed(5_000)` |
+| `RadioPlayerViewModel` | Plain `ViewModel` + `combine` + `stateIn`.                                                    | `WhileSubscribed(5_000)` |
+| `SearchViewModel`      | Plain `ViewModel` + declarative pipeline + `stateIn`, with the request in `SavedStateHandle`. | `Lazily` (see below)     |
+| `HomeViewModel`        | Keep it. Optionally use `SavedStateHandle.getStateFlow`.                                      | n/a                      |
 
 ### `FavoritesViewModel`
 
@@ -46,18 +46,18 @@ internal class FavoritesViewModel(
     private val removeFavoriteStation: RemoveFavoriteStationUseCase,
     initialUiState: FavoritesUiState = FavoritesUiState.initialState,
 ) : ViewModel() {
-    val uiState: StateFlow<FavoritesUiState> =
-        observeFavoriteStations()
-            .map { stations ->
-                FavoritesUiState(
-                    status = if (stations.isEmpty()) FavoritesStatus.Empty else FavoritesStatus.Content,
-                    stations = stations.toImmutableList(),
-                )
-            }.stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5_000),
-                initialValue = initialUiState,
+    val uiState: StateFlow<FavoritesUiState> = observeFavoriteStations()
+        .map { stations ->
+            FavoritesUiState(
+                status = if (stations.isEmpty()) FavoritesStatus.Empty else FavoritesStatus.Content,
+                stations = stations.toImmutableList(),
             )
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5_000),
+            initialValue = initialUiState,
+        )
 
     fun handleEvent(event: FavoritesEvent) {
         when (event) {
@@ -74,37 +74,34 @@ The Room query stops 5 s after the tab leaves composition. On return, the last v
 Two collectors write today: the snapshot mapping and the sleep-timer ticker. Both become flows that are combined into one state:
 
 ```kotlin
-private val sleepTimerRemaining: Flow<Long?> =
-    player.snapshot
-        .map { it.sleepTimerDeadlineMillis }
-        .distinctUntilChanged()
-        .flatMapLatest { deadline -> sleepTimerCountdown(deadline) }
-        .catch { Timber.e(it, "Error in sleep timer countdown") }
+private val sleepTimerRemaining: Flow<Long?> = player.snapshot
+    .map { it.sleepTimerDeadlineMillis }
+    .distinctUntilChanged()
+    .flatMapLatest { deadline -> sleepTimerCountdown(deadline) }
+    .catch { Timber.e(it, "Error in sleep timer countdown") }
 
-private fun sleepTimerCountdown(deadline: Long?): Flow<Long?> =
-    flow {
-        if (deadline != null) {
-            var remaining = deadline - clock()
-            while (remaining > ZERO_MILLIS) {
-                emit(remaining)
-                delay(millisUntilDisplayChange(remaining))
-                remaining = deadline - clock()
-            }
+private fun sleepTimerCountdown(deadline: Long?): Flow<Long?> = flow {
+    if (deadline != null) {
+        var remaining = deadline - clock()
+        while (remaining > ZERO_MILLIS) {
+            emit(remaining)
+            delay(millisUntilDisplayChange(remaining))
+            remaining = deadline - clock()
         }
-        emit(null)
     }
+    emit(null)
+}
 
-val uiState: StateFlow<RadioPlayerUiState> =
-    combine(player.snapshot, sleepTimerRemaining) { snapshot, remaining ->
-        RadioPlayerUiState(
-            stationName = snapshot.stationName,
-            artworkUri = snapshot.artworkUri?.toString(),
-            status = snapshot.status,
-            canPrevious = snapshot.hasPrevious,
-            canNext = snapshot.hasNext,
-            sleepTimerRemainingMillis = remaining,
-        )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), initialUiState)
+val uiState: StateFlow<RadioPlayerUiState> = combine(player.snapshot, sleepTimerRemaining) { snapshot, remaining ->
+    RadioPlayerUiState(
+        stationName = snapshot.stationName,
+        artworkUri = snapshot.artworkUri?.toString(),
+        status = snapshot.status,
+        canPrevious = snapshot.hasPrevious,
+        canNext = snapshot.hasNext,
+        sleepTimerRemainingMillis = remaining,
+    )
+}.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), initialUiState)
 ```
 
 - The countdown only ticks while the player screen is visible. It is computed from the deadline and the injected `clock`, so it stays correct after resubscribing.
@@ -135,48 +132,44 @@ internal class SearchViewModel(
     private val setStationFavorite: SetStationFavoriteUseCase,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-    private val request: StateFlow<SearchRequest> =
-        savedStateHandle.getStateFlow(KEY_SEARCH_REQUEST, SearchRequest())
+    private val request: StateFlow<SearchRequest> = savedStateHandle.getStateFlow(KEY_SEARCH_REQUEST, SearchRequest())
 
-    private val results: Flow<SearchResults> =
-        request.flatMapLatest { req ->
-            flow {
-                if (req.debounce) delay(SEARCH_DEBOUNCE_MILLIS)
-                emit(SearchResults(SearchStatus.Loading))
-                emit(
-                    searchStations(req.query, req.country?.code).fold(
-                        ifLeft = { SearchResults(SearchStatus.Error) },
-                        ifRight = { stations ->
-                            SearchResults(
-                                status = if (stations.isEmpty()) SearchStatus.Empty else SearchStatus.Content,
-                                stations = stations.toImmutableList(),
-                            )
-                        },
-                    ),
-                )
-            }
+    private val results: Flow<SearchResults> = request.flatMapLatest { req ->
+        flow {
+            if (req.debounce) delay(SEARCH_DEBOUNCE_MILLIS)
+            emit(SearchResults(SearchStatus.Loading))
+            emit(
+                searchStations(req.query, req.country?.code).fold(
+                    { SearchResults(SearchStatus.Error) },
+                    { stations ->
+                        SearchResults(
+                            status = if (stations.isEmpty()) SearchStatus.Empty else SearchStatus.Content,
+                            stations = stations.toImmutableList(),
+                        )
+                    },
+                ),
+            )
         }
+    }
 
     // Retries load countries again only until the first success.
-    private val countries: Flow<ImmutableList<Country>> =
-        request
-            .map { it.attempt }
-            .distinctUntilChanged()
-            .transformLatest { getCountries().onRight { emit(it.toImmutableList()) } }
-            .take(1)
-            .onStart { emit(persistentListOf()) }
+    private val countries: Flow<ImmutableList<Country>> = request
+        .map { it.attempt }
+        .distinctUntilChanged()
+        .transformLatest { getCountries().onRight { emit(it.toImmutableList()) } }
+        .take(1)
+        .onStart { emit(persistentListOf()) }
 
-    val uiState: StateFlow<SearchUiState> =
-        combine(request, results, countries, observeFavoriteIds()) { req, res, countries, favoriteIds ->
-            SearchUiState(
-                status = res.status,
-                query = req.query,
-                selectedCountry = req.country,
-                countries = countries,
-                stations = res.stations,
-                favoriteIds = favoriteIds.toImmutableSet(),
-            )
-        }.stateIn(viewModelScope, SharingStarted.Lazily, SearchUiState.initialState)
+    val uiState: StateFlow<SearchUiState> = combine(request, results, countries, observeFavoriteIds()) { req, res, countries, favoriteIds ->
+        SearchUiState(
+            status = res.status,
+            query = req.query,
+            selectedCountry = req.country,
+            countries = countries,
+            stations = res.stations,
+            favoriteIds = favoriteIds.toImmutableSet(),
+        )
+    }.stateIn(viewModelScope, SharingStarted.Lazily, SearchUiState.initialState)
 
     fun handleEvent(event: SearchEvent) {
         when (event) {
@@ -211,13 +204,13 @@ It also removes `searchJob`, the manual `cancel()`, and the reads of `currentUiS
 
 #### What is saved, and why
 
-| Field | Saved? | Reason |
-|---|---|---|
-| `query`, `country` | Yes | User input. Losing it after process death is a visible bug. |
+| Field                 | Saved?                | Reason                                                                                                                                                                                                                                                                                                                                                     |
+|-----------------------|-----------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `query`, `country`    | Yes                   | User input. Losing it after process death is a visible bug.                                                                                                                                                                                                                                                                                                |
 | `attempt`, `debounce` | Yes, as a side effect | They sit in the same `Parcelable`, so each event is one write and one emission. Splitting them into separate keys would emit twice per event, and the first emission would carry a stale `debounce` flag. That would show `Loading` and start a search that is cancelled at once. On restore they do no harm: at worst one 400 ms delay before the search. |
-| `stations`, `status` | No | Large lists risk `TransactionTooLargeException`. They come back from the API by searching again. |
-| `countries` | No | About 200 items. Fetched again on restore. |
-| `favoriteIds` | No | Room is the source of truth. |
+| `stations`, `status`  | No                    | Large lists risk `TransactionTooLargeException`. They come back from the API by searching again.                                                                                                                                                                                                                                                           |
+| `countries`           | No                    | About 200 items. Fetched again on restore.                                                                                                                                                                                                                                                                                                                 |
+| `favoriteIds`         | No                    | Room is the source of truth.                                                                                                                                                                                                                                                                                                                               |
 
 Required changes:
 
@@ -235,11 +228,10 @@ Its state is purely event-driven (the selected tab), and no flow can be derived 
 
 ```kotlin
 internal class HomeViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
-    val uiState: StateFlow<HomeUiState> =
-        savedStateHandle
-            .getStateFlow(KEY_SELECTED_TAB, HomeTab.Favorites)
-            .map { HomeUiState(selectedTab = it) }
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HomeUiState.initialState)
+    val uiState: StateFlow<HomeUiState> = savedStateHandle
+        .getStateFlow(KEY_SELECTED_TAB, HomeTab.Favorites)
+        .map { HomeUiState(selectedTab = it) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HomeUiState.initialState)
 
     fun handleEvent(event: HomeEvent) {
         when (event) {

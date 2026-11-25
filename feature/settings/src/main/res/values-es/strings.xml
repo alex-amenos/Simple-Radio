@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_light">Claro</string>
+    <string name="settings_dark">Oscuro</string>
+    <string name="settings_system">Sistema</string>
+    <string name="settings_cd_select_theme">Seleccionar tema</string>
+    <string name="settings_option_theme">Tema</string>
+    <string name="settings_app_version">Versión de la app</string>
+    <string name="settings_section_appearance">Apariencia</string>
+    <string name="settings_section_search">Búsqueda</string>
+    <string name="settings_option_default_country">País predeterminado</string>
+    <string name="settings_country_all">Todos los países</string>
+    <string name="settings_cd_select_country">Seleccionar país de búsqueda predeterminado</string>
+    <string name="settings_section_about">Acerca de</string>
+</resources>

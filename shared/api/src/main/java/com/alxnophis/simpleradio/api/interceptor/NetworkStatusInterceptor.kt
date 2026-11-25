@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import com.alxnophis.simpleradio.api.exception.NoConnectivityException
+import okhttp3.CacheControl
 import okhttp3.Interceptor
 import okhttp3.Response
 
@@ -38,10 +39,23 @@ internal class NetworkStatusInterceptor(
     }
 
     override fun intercept(chain: Interceptor.Chain): Response {
+        val request = chain.request()
         if (!isNetworkAvailable()) {
+            if (request.url.encodedPath.trimEnd('/') == "/json/countries") {
+                val offlineRequest =
+                    request
+                        .newBuilder()
+                        .cacheControl(CacheControl.FORCE_CACHE)
+                        .build()
+                val response = chain.proceed(offlineRequest)
+                if (response.isSuccessful) {
+                    return response
+                }
+                response.close()
+            }
             throw NoConnectivityException()
         }
-        return chain.proceed(chain.request())
+        return chain.proceed(request)
     }
 
     /**

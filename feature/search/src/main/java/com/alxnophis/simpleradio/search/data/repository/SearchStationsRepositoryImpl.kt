@@ -7,9 +7,7 @@ import arrow.retrofit.adapter.either.networkhandling.IOError
 import arrow.retrofit.adapter.either.networkhandling.UnexpectedCallError
 import com.alxnophis.simpleradio.api.exception.NoConnectivityException
 import com.alxnophis.simpleradio.api.radiobrowser.RadioBrowserSearchService
-import com.alxnophis.simpleradio.search.data.mapper.toCountryOrNull
 import com.alxnophis.simpleradio.search.data.mapper.toStationOrNull
-import com.alxnophis.simpleradio.search.data.model.Country
 import com.alxnophis.simpleradio.search.data.model.SearchError
 import com.alxnophis.simpleradio.storage.favorites.model.FavoriteStation
 import timber.log.Timber
@@ -17,19 +15,6 @@ import timber.log.Timber
 internal class SearchStationsRepositoryImpl(
     private val service: RadioBrowserSearchService,
 ) : SearchStationsRepository {
-    override suspend fun getCountries(): Either<SearchError, List<Country>> =
-        service
-            .getCountries()
-            .map { countries ->
-                countries
-                    .mapNotNull { it.toCountryOrNull() }
-                    .distinctBy { it.code }
-                    .sortedBy { it.name.lowercase() }
-            }.mapLeft { error ->
-                Timber.e("GET countries error: $error")
-                error.toSearchError()
-            }
-
     override suspend fun searchStations(
         name: String,
         countryCode: String?,
