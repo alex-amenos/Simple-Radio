@@ -82,9 +82,18 @@ internal class SearchViewModel(
 
     fun handleEvent(event: SearchEvent) {
         when (event) {
-            is SearchEvent.QueryChanged -> updateRequest { copy(query = event.query, debounce = true) }
-            is SearchEvent.CountrySelected -> updateRequest { copy(country = event.country, debounce = false) }
-            SearchEvent.Retry -> updateRequest { copy(attempt = attempt + 1, debounce = false) }
+            is SearchEvent.QueryChanged -> {
+                updateRequest { copy(query = event.query, debounce = true) }
+            }
+
+            is SearchEvent.CountrySelected -> {
+                updateRequest { copy(country = event.country, debounce = false) }
+            }
+
+            SearchEvent.Retry -> {
+                updateRequest { copy(attempt = attempt + 1, debounce = false) }
+            }
+
             is SearchEvent.ToggleFavorite -> {
                 val favorite = event.station.id !in uiState.value.favoriteIds
                 viewModelScope.launch { setStationFavorite(event.station, favorite) }
