@@ -1,5 +1,6 @@
 package com.alxnophis.simpleradio.root.di
 
+import com.alxnophis.simpleradio.countryselector.di.countrySelectorModule
 import com.alxnophis.simpleradio.favorites.di.favoritesModule
 import com.alxnophis.simpleradio.home.di.homeModule
 import com.alxnophis.simpleradio.radioplayer.di.radioPlayerModule
@@ -10,6 +11,7 @@ import org.koin.core.module.Module
 
 val featureModules: List<Module> =
     listOf(
+        countrySelectorModule,
         favoritesModule,
         homeModule,
         radioPlayerModule,
