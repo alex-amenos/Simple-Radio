@@ -1,0 +1,15 @@
+apply from: "$rootDir/buildSystem/gradle/common-android-shared.gradle"
+
+android {
+    namespace = 'com.alxnophis.jetpack.storage'
+}
+
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas".toString())
+}
+
+dependencies {
+    implementation libs.androidx.room.runtime
+    implementation libs.androidx.room.ktx
+    ksp libs.androidx.room.compiler
+}
