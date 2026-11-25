@@ -107,7 +107,8 @@ internal class RadioPlayerViewModelTest {
 
         dispatcher.scheduler.advanceUntilIdle()
 
-        viewModel.uiState.value.sleepTimerRemainingMillis.shouldBeNull()
+        viewModel.uiState.value.sleepTimerRemainingMillis
+            .shouldBeNull()
     }
 
     @Test
@@ -117,7 +118,8 @@ internal class RadioPlayerViewModelTest {
 
         dispatcher.scheduler.advanceUntilIdle()
 
-        viewModel.uiState.value.sleepTimerRemainingMillis.shouldBeNull()
+        viewModel.uiState.value.sleepTimerRemainingMillis
+            .shouldBeNull()
     }
 
     @Test
@@ -131,8 +133,7 @@ internal class RadioPlayerViewModelTest {
     }
 
     // uiState is shared WhileSubscribed, so the UI collector is simulated to keep it updated.
-    private fun RadioPlayerViewModel.subscribed(): RadioPlayerViewModel =
-        apply { uiCollector.launch { uiState.collect {} } }
+    private fun RadioPlayerViewModel.subscribed(): RadioPlayerViewModel = apply { uiCollector.launch { uiState.collect {} } }
 
     private class FakeRadioPlayer(
         initial: RadioPlayerSnapshot,

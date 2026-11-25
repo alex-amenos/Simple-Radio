@@ -16,6 +16,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
@@ -65,7 +66,7 @@ internal fun HomeScreen(
                         .consumeWindowInsets(paddingValues)
                         .fillMaxSize(),
             ) {
-                val tabStateHolder = androidx.compose.runtime.saveable.rememberSaveableStateHolder()
+                val tabStateHolder = rememberSaveableStateHolder()
                 tabStateHolder.SaveableStateProvider(key = uiState.selectedTab.name) {
                     when (uiState.selectedTab) {
                         HomeTab.Favorites -> favoritesContent()
