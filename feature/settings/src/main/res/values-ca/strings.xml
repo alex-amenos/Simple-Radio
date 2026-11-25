@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_light">Clar</string>
+    <string name="settings_dark">Fosc</string>
+    <string name="settings_system">Sistema</string>
+    <string name="settings_cd_select_theme">Seleccionar tema</string>
+    <string name="settings_option_theme">Tema</string>
+    <string name="settings_app_version">Versió de l\'aplicació</string>
+    <string name="settings_section_appearance">Aparença</string>
+    <string name="settings_section_search">Cerca</string>
+    <string name="settings_option_default_country">País predeterminat</string>
+    <string name="settings_country_all">Tots els països</string>
+    <string name="settings_cd_select_country">Seleccionar país de cerca predeterminat</string>
+    <string name="settings_section_about">Quant a</string>
+</resources>

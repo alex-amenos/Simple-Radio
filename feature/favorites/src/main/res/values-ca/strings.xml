@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="favorites_empty">Encara no teniu cap emissora preferida</string>
+    <string name="favorites_cd_remove">Eliminar %s de preferits</string>
+    <string name="favorites_remove_prompt">Voleu eliminar l\'emissora?</string>
+    <string name="favorites_remove_confirm">Eliminar</string>
+    <string name="favorites_remove_cancel">Cancel·lar</string>
+</resources>

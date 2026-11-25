@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="country_selector_title">Seleccionar país</string>
+    <string name="country_selector_search_hint">Buscar país</string>
+    <string name="country_selector_all_countries">Todos los países</string>
+    <string name="country_selector_empty">No se encontraron países</string>
+    <string name="country_selector_error">Error al cargar los países</string>
+    <string name="country_selector_retry">Reintentar</string>
+    <string name="country_selector_cd_back">Atrás</string>
+    <string name="country_selector_cd_clear">Borrar búsqueda</string>
+</resources>

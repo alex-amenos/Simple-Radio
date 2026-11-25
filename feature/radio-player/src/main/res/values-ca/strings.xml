@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="radioplayer_back">Enrere</string>
+    <string name="radioplayer_retry">Reintentar</string>
+    <string name="radioplayer_status_live">En directe</string>
+    <string name="radioplayer_status_paused">En pausa</string>
+    <string name="radioplayer_status_connecting">Connectant…</string>
+    <string name="radioplayer_offline_title">Sense connexió</string>
+    <string name="radioplayer_offline_message">No s\'ha pogut connectar amb l\'emissora. Comproveu la xarxa.</string>
+    <string name="radioplayer_previous">Emissora anterior</string>
+    <string name="radioplayer_next">Emissora següent</string>
+    <string name="radioplayer_play">Reprodueix</string>
+    <string name="radioplayer_pause">Pausa</string>
+    <string name="radioplayer_stop">Atura</string>
+    <string name="radioplayer_sleep_timer">Temporitzador d\'apagada</string>
+    <string name="radioplayer_sleep_off">Desactivat</string>
+    <string name="radioplayer_sleep_minutes">%d min</string>
+    <string name="radioplayer_sleep_remaining">S\'atura d\'aquí a %s</string>
+    <string name="radioplayer_sleep_remaining_minutes">%d minuts</string>
+    <string name="radioplayer_sleep_remaining_under_minute">menys d\'1 minut</string>
+    <string name="radioplayer_now_playing">S\'està reproduint</string>
+    <string name="radioplayer_sleep_title">Temporitzador:</string>
+</resources>

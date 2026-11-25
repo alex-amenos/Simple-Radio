@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="radioplayer_back">Atrás</string>
+    <string name="radioplayer_retry">Reintentar</string>
+    <string name="radioplayer_status_live">En directo</string>
+    <string name="radioplayer_status_paused">En pausa</string>
+    <string name="radioplayer_status_connecting">Conectando…</string>
+    <string name="radioplayer_offline_title">Sin conexión</string>
+    <string name="radioplayer_offline_message">No se pudo conectar con la emisora. Comprueba tu red.</string>
+    <string name="radioplayer_previous">Emisora anterior</string>
+    <string name="radioplayer_next">Emisora siguiente</string>
+    <string name="radioplayer_play">Reproducir</string>
+    <string name="radioplayer_pause">Pausar</string>
+    <string name="radioplayer_stop">Detener</string>
+    <string name="radioplayer_sleep_timer">Temporizador de apagado</string>
+    <string name="radioplayer_sleep_off">Desactivado</string>
+    <string name="radioplayer_sleep_minutes">%d min</string>
+    <string name="radioplayer_sleep_remaining">Se detiene en %s</string>
+    <string name="radioplayer_sleep_remaining_minutes">%d minutos</string>
+    <string name="radioplayer_sleep_remaining_under_minute">menos de 1 minuto</string>
+    <string name="radioplayer_now_playing">Reproduciendo ahora</string>
+    <string name="radioplayer_sleep_title">Temporizador:</string>
+</resources>
