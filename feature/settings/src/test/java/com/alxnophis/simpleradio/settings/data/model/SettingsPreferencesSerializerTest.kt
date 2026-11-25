@@ -40,6 +40,24 @@ internal class SettingsPreferencesSerializerTest : BaseUnitTest() {
         }
 
     @Test
+    fun `GIVEN settings preferences with default country WHEN writeTo and readFrom THEN country is preserved`() =
+        runTest {
+            val original =
+                SettingsPreferences(
+                    themeOption = SettingsPreferences.ThemeOptions.DARK,
+                    defaultCountryCode = "ES",
+                )
+            val output = ByteArrayOutputStream()
+
+            serializer.writeTo(original, output)
+            val input = ByteArrayInputStream(output.toByteArray())
+            val result = serializer.readFrom(input)
+
+            result shouldBeEqualTo original
+            result.defaultCountryCode shouldBeEqualTo "ES"
+        }
+
+    @Test
     fun `GIVEN empty input stream WHEN readFrom THEN return default value`() =
         runTest {
             val input = ByteArrayInputStream(ByteArray(0))

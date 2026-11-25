@@ -19,8 +19,13 @@ internal class SettingsViewModel(
     val uiState =
         settingsRepository
             .getSettingsFlow()
-            .map { SettingsUiState(themeOption = it.themeOption.map()) }
-            .stateIn(
+            .map { preferences ->
+                SettingsUiState(
+                    themeOption = preferences.themeOption.map(),
+                    defaultCountryCode = preferences.defaultCountryCode,
+                    defaultCountryName = preferences.defaultCountryName,
+                )
+            }.stateIn(
                 scope = viewModelScope,
                 initialValue = initialState,
                 started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5_000),
@@ -30,11 +35,19 @@ internal class SettingsViewModel(
         viewModelScope.launch {
             when (event) {
                 is SettingsUiEvent.SetTheme -> setTheme(event.theme)
+                is SettingsUiEvent.SetDefaultCountry -> setDefaultCountry(event.countryCode, event.countryName)
             }
         }
     }
 
     private suspend fun setTheme(theme: Theme) {
         settingsRepository.updateThemeOption(theme.map())
+    }
+
+    private suspend fun setDefaultCountry(
+        countryCode: String?,
+        countryName: String?,
+    ) {
+        settingsRepository.updateDefaultCountry(countryCode, countryName)
     }
 }

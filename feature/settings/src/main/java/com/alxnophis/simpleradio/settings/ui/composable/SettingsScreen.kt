@@ -28,6 +28,7 @@ import com.alxnophis.simpleradio.settings.ui.contract.SettingsUiState
 @Composable
 internal fun SettingsScreen(
     state: SettingsUiState,
+    onSelectCountry: () -> Unit = {},
     onEvent: (SettingsUiEvent) -> Unit = {},
     appVersion: String = LocalContext.current.getVersion(),
 ) {
@@ -51,6 +52,13 @@ internal fun SettingsScreen(
                     onOptionSelected = { theme ->
                         onEvent(SettingsUiEvent.SetTheme(theme))
                     },
+                )
+                HorizontalDivider()
+                SettingsSectionTitle(title = stringResource(R.string.settings_section_search))
+                SettingsCountryItem(
+                    modifier = Modifier.fillMaxWidth(),
+                    selectedCountryName = state.defaultCountryName,
+                    onClick = onSelectCountry,
                 )
                 HorizontalDivider()
                 SettingsSectionTitle(title = stringResource(R.string.settings_section_about))

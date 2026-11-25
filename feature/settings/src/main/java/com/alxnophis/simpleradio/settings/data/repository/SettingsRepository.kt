@@ -9,4 +9,9 @@ interface SettingsRepository {
     fun getSettingsFlow(): Flow<SettingsPreferences>
 
     suspend fun updateThemeOption(themeOption: SettingsPreferences.ThemeOptions): Either<SettingsPreferencesError, Unit>
+
+    suspend fun updateDefaultCountry(
+        countryCode: String?,
+        countryName: String?,
+    ): Either<SettingsPreferencesError, Unit>
 }

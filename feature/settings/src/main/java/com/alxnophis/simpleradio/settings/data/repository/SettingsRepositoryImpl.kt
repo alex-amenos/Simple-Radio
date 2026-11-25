@@ -65,6 +65,14 @@ internal class SettingsRepositoryImpl(
             it.copy(themeOption = themeOption)
         }
 
+    override suspend fun updateDefaultCountry(
+        countryCode: String?,
+        countryName: String?,
+    ): Either<SettingsPreferencesError, Unit> =
+        updatePreference {
+            it.copy(defaultCountryCode = countryCode, defaultCountryName = countryName)
+        }
+
     companion object {
         private const val SETTINGS_PREFERENCES_FILE_NAME = "settings_preferences"
     }

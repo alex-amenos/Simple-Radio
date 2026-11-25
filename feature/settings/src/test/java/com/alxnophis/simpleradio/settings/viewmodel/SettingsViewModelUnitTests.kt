@@ -34,6 +34,7 @@ private class SettingsViewModelUnitTests : BaseUnitTest() {
                 flowOf(
                     SettingsPreferencesMother.create(
                         themeOption = SettingsPreferences.ThemeOptions.DARK,
+                        defaultCountryCode = "ES",
                     ),
                 )
             whenever(settingsRepositoryMock.getSettingsFlow()).thenReturn(settingsPreferencesFlow)
@@ -45,6 +46,7 @@ private class SettingsViewModelUnitTests : BaseUnitTest() {
                 awaitItem() shouldBeEqualTo
                     SettingsUiState(
                         themeOption = Theme.DARK,
+                        defaultCountryCode = "ES",
                     )
             }
 
@@ -68,7 +70,20 @@ private class SettingsViewModelUnitTests : BaseUnitTest() {
     }
 
     @Test
-    fun `GIVEN updated state WHEN unsubscribed for longer than 10 seconds and resubscribing THEN assert last state is retained`() {
+    fun `GIVEN a user updates default country WHEN SetDefaultCountry event THEN assert repository updated`() {
+        runTest {
+            val viewModel = settingsViewModelMother()
+            whenever(settingsRepositoryMock.updateDefaultCountry("ES", "Spain")).thenReturn(Unit.right())
+
+            viewModel.handleEvent(SettingsUiEvent.SetDefaultCountry("ES", "Spain"))
+            runCurrent()
+
+            verify(settingsRepositoryMock).updateDefaultCountry("ES", "Spain")
+        }
+    }
+
+    @Test
+    fun `GIVEN dynamic theme updates WHEN observing flows THEN assert UiState emits each change`() {
         runTest {
             val settingsFlow = MutableSharedFlow<SettingsPreferences>()
             whenever(settingsRepositoryMock.getSettingsFlow()).thenReturn(settingsFlow)

@@ -18,6 +18,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 @Serializable
 data class SettingsPreferences(
     val themeOption: ThemeOptions,
+    val defaultCountryCode: String? = null,
+    val defaultCountryName: String? = null,
 ) {
     @Serializable
     enum class ThemeOptions(
@@ -32,6 +34,8 @@ data class SettingsPreferences(
         val default =
             SettingsPreferences(
                 themeOption = ThemeOptions.SYSTEM,
+                defaultCountryCode = null,
+                defaultCountryName = null,
             )
     }
 }
