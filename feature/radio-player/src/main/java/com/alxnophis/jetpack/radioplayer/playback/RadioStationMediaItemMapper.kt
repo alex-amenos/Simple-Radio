@@ -5,7 +5,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import com.alxnophis.jetpack.radioplayer.data.model.RadioStation
 
-private const val ARTIST = "Radio Browser - Spain"
+private const val ARTIST = "Radio Browser"
 
 internal fun RadioStation.toMediaItem(): MediaItem =
     MediaItem

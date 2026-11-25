@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="radioplayer_feature_title">Radio Streaming</string>
-    <string name="radioplayer_stations_title">Radio Streaming</string>
     <string name="radioplayer_back">Back</string>
     <string name="radioplayer_retry">Retry</string>
-    <string name="radioplayer_stations_error">Could not load the stations. Check your connection.</string>
-    <string name="radioplayer_stations_empty">No stations available right now.</string>
     <string name="radioplayer_status_live">Live</string>
     <string name="radioplayer_status_paused">Paused</string>
     <string name="radioplayer_status_connecting">Connecting…</string>

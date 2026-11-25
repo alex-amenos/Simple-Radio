@@ -26,7 +26,7 @@ internal class RadioStationMediaItemMapperTest {
         val mediaItem = RadioStationMother.create(name = "Cadena SER").toMediaItem()
 
         mediaItem.mediaMetadata.title.toString() shouldBeEqualTo "Cadena SER"
-        mediaItem.mediaMetadata.artist.toString() shouldBeEqualTo "Radio Browser - Spain"
+        mediaItem.mediaMetadata.artist.toString() shouldBeEqualTo "Radio Browser"
     }
 
     @Test
