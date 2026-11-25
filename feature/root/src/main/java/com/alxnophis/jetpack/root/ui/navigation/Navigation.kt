@@ -94,7 +94,7 @@ fun Navigation(
                     HomeFeature(
                         favoritesContent = { FavoritesFeature(onStationSelected = ::playStations) },
                         searchContent = { SearchFeature(onStationSelected = ::playStations) },
-                        settingsContent = { onSettingsBack -> SettingsFeature(onBack = onSettingsBack) },
+                        settingsContent = { SettingsFeature() },
                         onBack = onBack,
                     )
                 }

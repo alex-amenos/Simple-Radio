@@ -7,11 +7,10 @@ import com.alxnophis.jetpack.settings.ui.viewmodel.SettingsViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SettingsFeature(onBack: () -> Unit) {
+fun SettingsFeature() {
     val viewModel = koinViewModel<SettingsViewModel>()
     SettingsScreen(
         state = viewModel.uiState.collectAsStateWithLifecycle().value,
-        onBack = onBack,
         onEvent = viewModel::handleEvent,
     )
 }

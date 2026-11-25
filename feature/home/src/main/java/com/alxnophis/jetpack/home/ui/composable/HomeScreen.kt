@@ -34,7 +34,7 @@ internal fun HomeScreen(
     handleEvent: (HomeEvent) -> Unit,
     favoritesContent: @Composable () -> Unit,
     searchContent: @Composable () -> Unit,
-    settingsContent: @Composable (onBack: () -> Unit) -> Unit,
+    settingsContent: @Composable () -> Unit,
     onBack: () -> Unit,
 ) {
     val goToFirstTab = { handleEvent(HomeEvent.SelectTab(HomeTab.Favorites)) }
@@ -71,7 +71,7 @@ internal fun HomeScreen(
                     when (uiState.selectedTab) {
                         HomeTab.Favorites -> favoritesContent()
                         HomeTab.Search -> searchContent()
-                        HomeTab.Settings -> settingsContent(goToFirstTab)
+                        HomeTab.Settings -> settingsContent()
                     }
                 }
             }

@@ -20,7 +20,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.alxnophis.jetpack.core.extensions.getVersion
-import com.alxnophis.jetpack.core.ui.composable.CoreTopBar
 import com.alxnophis.jetpack.core.ui.theme.AppTheme
 import com.alxnophis.jetpack.settings.R
 import com.alxnophis.jetpack.settings.ui.contract.SettingsUiEvent
@@ -29,20 +28,12 @@ import com.alxnophis.jetpack.settings.ui.contract.SettingsUiState
 @Composable
 internal fun SettingsScreen(
     state: SettingsUiState,
-    onBack: () -> Unit = {},
     onEvent: (SettingsUiEvent) -> Unit = {},
     appVersion: String = LocalContext.current.getVersion(),
 ) {
     AppTheme {
         val context = LocalContext.current
         Scaffold(
-            topBar = {
-                CoreTopBar(
-                    modifier = Modifier.fillMaxWidth(),
-                    title = stringResource(id = R.string.settings_title),
-                    onBack = onBack,
-                )
-            },
             modifier = Modifier.fillMaxSize(),
             contentWindowInsets = WindowInsets.safeDrawing,
         ) { paddingValues ->
