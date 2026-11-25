@@ -24,7 +24,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alxnophis.jetpack.core.extensions.testTagsAsResourceIdInDebug
 import com.alxnophis.jetpack.core.ui.theme.AppTheme
-import com.alxnophis.jetpack.radio.playback.RadioPlayerIntent
+import com.alxnophis.jetpack.radioplayer.playback.RadioPlayerIntent
 import com.alxnophis.jetpack.root.ui.composable.OfflineIndicator
 import com.alxnophis.jetpack.root.ui.navigation.Navigation
 import com.alxnophis.jetpack.root.ui.viewmodel.RootViewModel

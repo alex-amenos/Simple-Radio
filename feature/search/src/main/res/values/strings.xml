@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="search_title">Search</string>
+    <string name="search_name_label">Station name</string>
+    <string name="search_cd_clear">Clear search</string>
+    <string name="search_country_all">All countries</string>
+    <string name="search_country_label">Country: %s</string>
+    <string name="search_empty">No stations found. Try another name or country.</string>
+    <string name="search_error">Could not load the stations. Check your connection.</string>
+    <string name="search_retry">Retry</string>
+    <string name="search_cd_add_favorite">Add %s to favorites</string>
+    <string name="search_cd_remove_favorite">Remove %s from favorites</string>
+</resources>

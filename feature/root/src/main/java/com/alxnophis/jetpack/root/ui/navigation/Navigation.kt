@@ -15,16 +15,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
-import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
-import com.alxnophis.jetpack.home.domain.model.Feature
+import com.alxnophis.jetpack.favorites.ui.composable.FavoritesFeature
 import com.alxnophis.jetpack.home.ui.composable.HomeFeature
-import com.alxnophis.jetpack.radio.ui.composable.RadioPlayerFeature
-import com.alxnophis.jetpack.radio.ui.composable.RadioStationListFeature
+import com.alxnophis.jetpack.radioplayer.playback.RadioPlayback
+import com.alxnophis.jetpack.radioplayer.ui.composable.RadioPlayerFeature
+import com.alxnophis.jetpack.search.ui.composable.SearchFeature
 import com.alxnophis.jetpack.settings.ui.navigation.SettingsFeature
+import com.alxnophis.jetpack.storage.favorites.model.FavoriteStation
+import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @SuppressLint("ComposeModifierMissing")
@@ -35,6 +37,7 @@ fun Navigation(
     onRadioPlayerOpened: () -> Unit = {},
 ) {
     val context = LocalContext.current
+    val radioPlayback = koinInject<RadioPlayback>()
     val backStack = rememberNavBackStack(Route.Home)
     val onBack: () -> Unit = {
         if (backStack.size > 1) {
@@ -49,8 +52,15 @@ fun Navigation(
 
     fun showRadioPlayer() {
         if (backStack.last() is Route.RadioPlayer) return
-        if (backStack.last() !is Route.RadioStations) backStack.add(Route.RadioStations)
         backStack.add(Route.RadioPlayer)
+    }
+
+    fun playStations(
+        stations: List<FavoriteStation>,
+        index: Int,
+    ) {
+        radioPlayback.play(stations, index)
+        showRadioPlayer()
     }
 
     LaunchedEffect(openRadioPlayer) {
@@ -82,26 +92,10 @@ fun Navigation(
             entryProvider {
                 entry<Route.Home> {
                     HomeFeature(
-                        onNavigateTo = { feature: Feature ->
-                            val route: NavKey =
-                                when (feature) {
-                                    Feature.RadioStreaming -> Route.RadioStations
-                                    Feature.Settings -> Route.Settings
-                                }
-                            backStack.add(route)
-                        },
+                        favoritesContent = { FavoritesFeature(onStationSelected = ::playStations) },
+                        searchContent = { SearchFeature(onStationSelected = ::playStations) },
+                        settingsContent = { onSettingsBack -> SettingsFeature(onBack = onSettingsBack) },
                         onBack = onBack,
-                    )
-                }
-                entry<Route.Settings> {
-                    SettingsFeature(
-                        onBack = onBack,
-                    )
-                }
-                entry<Route.RadioStations> {
-                    RadioStationListFeature(
-                        onBack = onBack,
-                        onStationSelected = { backStack.add(Route.RadioPlayer) },
                     )
                 }
                 entry<Route.RadioPlayer> {

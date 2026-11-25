@@ -30,6 +30,8 @@ include ':shared:testing'
 
 // Feature modules
 include ':feature:root'
+include ':feature:favorites'
 include ':feature:home'
-include ':feature:radio'
+include ':feature:radio-player'
+include ':feature:search'
 include ':feature:settings'

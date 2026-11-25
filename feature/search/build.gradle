@@ -1,0 +1,12 @@
+apply from: "$rootDir/buildSystem/gradle/common-android-feature.gradle"
+
+android {
+    resourcePrefix = 'search'
+    namespace = 'com.alxnophis.jetpack.search'
+}
+
+dependencies {
+    implementation project(Modules.SHARED_API)
+    implementation project(Modules.SHARED_STORAGE)
+    implementation libs.retrofit
+}

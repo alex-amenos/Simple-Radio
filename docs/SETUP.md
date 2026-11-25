@@ -24,7 +24,7 @@ In Android Studio, choose **Open** and select the `Simple-Radio` directory. If p
 
 ## 2. API credentials (optional)
 
-The radio, home and settings features do not require any credentials. The `shared:api` module can optionally read a TMDB token, which is only needed if you add features that use the TMDB API.
+The home, favorites, search, radio player and settings features do not require any credentials. The `shared:api` module can optionally read a TMDB token, which is only needed if you add features that use the TMDB API.
 
 The token is read as a Gradle project property. Add it to your user-level Gradle properties file, which is outside the repository and must not be committed:
 

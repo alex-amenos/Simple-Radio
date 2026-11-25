@@ -30,12 +30,12 @@ Simple Radio: multi-module Android internet radio app using Kotlin, Jetpack Comp
 
 **Android Lint & Structured Coroutines:**
 - **All modules:** `./gradlew lintDebug`
-- **Single module:** `./gradlew :feature:radio:lintDebug`
+- **Single module:** `./gradlew :feature:search:lintDebug`
 - **Report locations:** `<module>/build/reports/lint/lint-results.html`
 
 **Testing & Screenshots:**
-- **Run module test:** `./gradlew :feature:radio:testDebugUnitTest`
-- **Single test class:** `./gradlew :feature:radio:testDebugUnitTest --tests "*.RadioStationListViewModelTest"`
+- **Run module test:** `./gradlew :feature:search:testDebugUnitTest`
+- **Single test class:** `./gradlew :feature:search:testDebugUnitTest --tests "*.SearchViewModelUnitTests"`
 - **Screenshot tests (Roborazzi):**
   - Verify: `./gradlew verifyRoborazziDebug`
   - Record new baselines: `./gradlew recordRoborazziDebug`
@@ -50,12 +50,12 @@ Simple Radio: multi-module Android internet radio app using Kotlin, Jetpack Comp
 ### MVI & Functional Programming
 - **BaseViewModel:** Feature ViewModels with complex interactive screens and event pipelines extend `com.alxnophis.jetpack.core.ui.viewmodel.BaseViewModel<Event, State>`. Override `handleEvent(event: Event)` to process actions.
 - **StateFlow with `stateIn` (Standard ViewModel):** Simpler ViewModels or root/orchestration ViewModels that derive and combine reactive state directly from flows/repositories (such as `SettingsViewModel` and `RootViewModel`) use standard Android `androidx.lifecycle.ViewModel` with `stateIn(scope = viewModelScope, started = SharingStarted.WhileSubscribed(5_000), initialValue = ...)` rather than `BaseViewModel`.
-- **Error Handling:** Use Arrow's `Either<Error, Data>`. Domain errors are modeled as sealed interfaces (e.g., `RadioError`). Avoid throwing exceptions for business logic; use `.mapLeft` / `.fold`.
+- **Error Handling:** Use Arrow's `Either<Error, Data>`. Domain errors are modeled as sealed interfaces (e.g., `SearchError`). Avoid throwing exceptions for business logic; use `.mapLeft` / `.fold`.
 - **State Management:** Use Arrow Optics (`@optics` + `updateCopy`) for complex immutable state updates in ViewModels, preferring this over standard data class `copy()` methods.
   ```kotlin
   _uiState.updateCopy {
-      RadioStationListUiState.status set RadioStationListStatus.Loading
-      RadioStationListUiState.stations set stations.toImmutableList()
+      FeatureUiState.status set FeatureStatus.Loading
+      FeatureUiState.items set items.toImmutableList()
   }
   ```
 - **Testing:** 
@@ -66,8 +66,8 @@ Simple Radio: multi-module Android internet radio app using Kotlin, Jetpack Comp
 ### Project Structure (Module Types)
 The application is structured into three main types of modules to enforce separation of concerns:
 - **`:app`**: The application shell. Wires everything together and initializes DI (Koin). The root navigation graph lives in `:feature:root`. Should contain minimal business logic.
-- **`:feature:*`**: Independent, vertical feature slices (`:feature:root`, `:feature:home`, `:feature:radio`, `:feature:settings`). Each contains its own UI, Domain, and Data layers. **Rule:** Feature modules should generally not depend on other feature modules.
-- **`:shared:*`**: Foundational, horizontal libraries (`:shared:core`, `:shared:api`, `:shared:kotlin`, `:shared:testing`). Contains cross-cutting concerns, base classes, networking setup, and UI theme components used by features.
+- **`:feature:*`**: Independent, vertical feature slices (`:feature:root`, `:feature:home`, `:feature:favorites`, `:feature:search`, `:feature:radio-player`, `:feature:settings`). Each contains its own UI, Domain, and Data layers. **Rule:** Feature modules should generally not depend on other feature modules.
+- **`:shared:*`**: Foundational, horizontal libraries (`:shared:core`, `:shared:api`, `:shared:kotlin`, `:shared:storage`, `:shared:testing`). Contains cross-cutting concerns, base classes, networking setup, and UI theme components used by features.
 
 ### Visibility Restrictions
   - ViewModels, UI components, Use Cases, and Repository Implementations must be `internal`.
