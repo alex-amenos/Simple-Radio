@@ -15,5 +15,6 @@ object Modules {
     const val FEATURE_HOME = ":feature:home"
     const val FEATURE_RADIO = ":feature:radio"
     const val FEATURE_ROOT = ":feature:root"
+    const val FEATURE_SEARCH = ":feature:search"
     const val FEATURE_SETTINGS = ":feature:settings"
 }

@@ -11,4 +11,5 @@ data class RadioStationApiModel(
     @SerialName("favicon") val favicon: String? = null,
     @SerialName("codec") val codec: String? = null,
     @SerialName("bitrate") val bitrate: Int? = null,
+    @SerialName("country") val country: String? = null,
 )
