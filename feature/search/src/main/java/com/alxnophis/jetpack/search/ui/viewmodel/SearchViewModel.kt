@@ -54,7 +54,7 @@ internal class SearchViewModel(
         request
             .map { it.attempt }
             .distinctUntilChanged()
-            .transformLatest { getCountries().onRight { countries -> emit(countries.toImmutableList()) } }
+            .transformLatest { getCountries().onRight { list -> emit(list.toImmutableList()) } }
             .take(1)
             .onStart { emit(persistentListOf()) }
 
