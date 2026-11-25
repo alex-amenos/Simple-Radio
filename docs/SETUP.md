@@ -22,22 +22,9 @@ cd Simple-Radio
 
 In Android Studio, choose **Open** and select the `Simple-Radio` directory. If prompted, trust the project and sync it with Gradle. In **Settings > Build, Execution, Deployment > Build Tools > Gradle**, set **Gradle JDK** to JDK 21.
 
-## 2. API credentials (optional)
+## 2. API credentials
 
-The home, favorites, search, radio player and settings features do not require any credentials. The `shared:api` module can optionally read a TMDB token, which is only needed if you add features that use the TMDB API.
-
-The token is read as a Gradle project property. Add it to your user-level Gradle properties file, which is outside the repository and must not be committed:
-
-- macOS or Linux: `~/.gradle/gradle.properties`
-- Windows: `%USERPROFILE%\.gradle\gradle.properties`
-
-```properties
-THEMOVIEDB_ORG_API_TOKEN=your_tmdb_api_read_access_token
-```
-
-Use the **API Read Access Token (v4 auth)** from your TMDB account's **API** settings, not the v3 API key. You can also pass it to a Gradle command with `-PTHEMOVIEDB_ORG_API_TOKEN=...`.
-
-Avoid putting real credentials in committed files, screenshots, or shared command history.
+The application communicates with public Radio Browser servers and does not require any third-party API credentials.
 
 ## 3. Build the debug app
 

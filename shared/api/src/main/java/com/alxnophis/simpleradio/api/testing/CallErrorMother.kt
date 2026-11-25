@@ -1,4 +1,4 @@
-package com.alxnophis.simpleradio.api.jsonplaceholder.model
+package com.alxnophis.simpleradio.api.testing
 
 import arrow.retrofit.adapter.either.networkhandling.HttpError
 import arrow.retrofit.adapter.either.networkhandling.IOError
