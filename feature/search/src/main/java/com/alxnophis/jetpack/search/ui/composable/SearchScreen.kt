@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
@@ -17,7 +18,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.Favorite
@@ -28,12 +28,14 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -100,6 +102,7 @@ private fun SearchFilters(
             onValueChange = { handleEvent(SearchEvent.QueryChanged(it)) },
             modifier = Modifier.fillMaxWidth(),
             label = { Text(text = stringResource(R.string.search_name_label)) },
+            shape = SearchFieldShape,
             leadingIcon = { Icon(imageVector = Icons.Filled.Search, contentDescription = null) },
             trailingIcon = {
                 if (query.isNotEmpty()) {
@@ -119,6 +122,7 @@ private fun SearchFilters(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CountryPicker(
     selectedCountry: Country?,
@@ -127,23 +131,27 @@ private fun CountryPicker(
 ) {
     var expanded by remember { mutableStateOf(false) }
     val allCountries = stringResource(R.string.search_country_all)
-    Box {
-        OutlinedButton(
-            onClick = { expanded = true },
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Text(
-                text = stringResource(R.string.search_country_label, selectedCountry?.name ?: allCountries),
-                modifier = Modifier.weight(1f),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Icon(imageVector = Icons.Filled.ArrowDropDown, contentDescription = null)
-        }
-        DropdownMenu(
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it },
+    ) {
+        OutlinedTextField(
+            value = selectedCountry?.name ?: allCountries,
+            onValueChange = {},
+            modifier =
+                Modifier
+                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                    .fillMaxWidth(),
+            readOnly = true,
+            singleLine = true,
+            shape = SearchFieldShape,
+            label = { Text(text = stringResource(R.string.search_country_label)) },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+        )
+        ExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            modifier = Modifier.height(360.dp),
+            modifier = Modifier.heightIn(max = 360.dp),
         ) {
             DropdownMenuItem(
                 text = { Text(text = allCountries) },
@@ -154,7 +162,7 @@ private fun CountryPicker(
             )
             countries.forEach { country ->
                 DropdownMenuItem(
-                    text = { Text(text = country.name) },
+                    text = { Text(text = country.name, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                     onClick = {
                         expanded = false
                         onCountrySelected(country)
@@ -289,3 +297,5 @@ private fun SearchScreenPreview(
         )
     }
 }
+
+private val SearchFieldShape = RoundedCornerShape(16.dp)
