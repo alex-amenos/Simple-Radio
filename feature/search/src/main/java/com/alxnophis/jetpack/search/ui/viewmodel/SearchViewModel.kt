@@ -60,7 +60,12 @@ internal class SearchViewModel(
 
     // Lazily: tab switches remove the screen but keep this view model, and results must not be fetched again.
     val uiState: StateFlow<SearchUiState> =
-        combine(request, results, countries, observeFavoriteIds()) { current, found, countryList, favoriteIds ->
+        combine(
+            request,
+            results.onStart { emit(SearchResults(SearchStatus.Loading)) },
+            countries,
+            observeFavoriteIds().onStart { emit(emptySet()) },
+        ) { current, found, countryList, favoriteIds ->
             SearchUiState(
                 status = found.status,
                 query = current.query,
