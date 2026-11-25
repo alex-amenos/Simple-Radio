@@ -20,15 +20,6 @@ Built with modern Android development practices in mind:
 * **Testing:** JUnit 5, Turbine, Roborazzi (Screenshot Testing)
 * **Modularization:** Multi-module architecture by feature
 
-## 🧩 Modules
-
-* `app`: Application entry point.
-* `feature:root`: Activity, navigation and feature wiring.
-* `feature:home`: Home screen listing the available features.
-* `feature:radio`: Internet radio station list and streaming player.
-* `feature:settings`: App settings.
-* `shared:api`, `shared:core`, `shared:kotlin`, `shared:testing`: Shared networking, UI/core utilities, Kotlin helpers and test utilities.
-
 ## 🚦 Project Status
 
 ![Simple Radio - Main status](https://github.com/alex-amenos/Simple-Radio/actions/workflows/android_ci.yml/badge.svg?branch=main)
