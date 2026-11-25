@@ -1,6 +1,6 @@
 # Project Setup
 
-Follow these steps to configure, build, and run the Jetpack app locally.
+Follow these steps to configure, build, and run the Simple Radio app locally.
 
 ## Prerequisites
 
@@ -16,39 +16,28 @@ The project includes the Gradle wrapper, so you do not need to install Gradle se
 Clone the repository and open its root directory in Android Studio:
 
 ```shell
-git clone https://github.com/alex-amenos/Jetpack.git
-cd Jetpack
+git clone https://github.com/alex-amenos/Simple-Radio.git
+cd Simple-Radio
 ```
 
-In Android Studio, choose **Open** and select the `Jetpack` directory. If prompted, trust the project and sync it with Gradle. In **Settings > Build, Execution, Deployment > Build Tools > Gradle**, set **Gradle JDK** to JDK 21.
+In Android Studio, choose **Open** and select the `Simple-Radio` directory. If prompted, trust the project and sync it with Gradle. In **Settings > Build, Execution, Deployment > Build Tools > Gradle**, set **Gradle JDK** to JDK 21.
 
-## 2. Configure API credentials
+## 2. API credentials (optional)
 
-API credentials are optional for building and launching the app. Without them, features that use Google Maps or TMDB will not work correctly.
+The radio, home and settings features do not require any credentials. The `shared:api` module can optionally read a TMDB token, which is only needed if you add features that use the TMDB API.
 
-The project reads credentials as Gradle project properties. The recommended option is to add them to your user-level Gradle properties file, which is outside the repository and should not be committed:
+The token is read as a Gradle project property. Add it to your user-level Gradle properties file, which is outside the repository and must not be committed:
 
 - macOS or Linux: `~/.gradle/gradle.properties`
 - Windows: `%USERPROFILE%\.gradle\gradle.properties`
 
-Add the properties for the services you want to use:
-
 ```properties
-JETPACK_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
 THEMOVIEDB_ORG_API_TOKEN=your_tmdb_api_read_access_token
 ```
 
-Create a Google Maps API key in the [Google Cloud Console](https://console.cloud.google.com/), enable **Maps SDK for Android**, and use the key for `JETPACK_GOOGLE_MAPS_API_KEY`. Create a TMDB account, request API access in your account's **API** settings, and use the **API Read Access Token (v4 auth)** for `THEMOVIEDB_ORG_API_TOKEN`. The project does not use a TMDB v3 API key for this property.
+Use the **API Read Access Token (v4 auth)** from your TMDB account's **API** settings, not the v3 API key. You can also pass it to a Gradle command with `-PTHEMOVIEDB_ORG_API_TOKEN=...`.
 
-Alternatively, pass the values to a Gradle command with `-P`:
-
-```shell
-./gradlew :app:assembleDebug \
-  -PJETPACK_GOOGLE_MAPS_API_KEY=your_google_maps_api_key \
-  -PTHEMOVIEDB_ORG_API_TOKEN=your_tmdb_api_read_access_token
-```
-
-Avoid putting real credentials in committed files, screenshots, or shared command history. Restrict API keys in the provider consoles where possible.
+Avoid putting real credentials in committed files, screenshots, or shared command history.
 
 ## 3. Build the debug app
 
@@ -70,7 +59,7 @@ Alternatively, install and launch the debug app on a running emulator or connect
 ./gradlew :app:installDebug
 ```
 
-The debug application ID is `com.alxnophis.jetpack.debug`. Grant location permission when prompted if you want to use location-based features.
+The debug application ID is `com.alxnophis.jetpack.debug`.
 
 ## Useful checks
 

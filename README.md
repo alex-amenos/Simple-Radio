@@ -1,14 +1,11 @@
-# Jetpack Playground 🚀
+# Simple Radio 📻
 
-A personal project and sandbox for experimenting with modern Android development, architecture, and libraries.
-
-ℹ️ **Note:** As an experimental playground, some features are works-in-progress and may lack complete test coverage or a fully separated data/domain layer.
+A simple internet radio app for Android, built with modern Android development practices.
 
 ## 📚 Documentation
 
 * **[Project Setup Guide](./docs/SETUP.md):** Step-by-step instructions for configuring and running the app.
-* **[Jetpack Playgrounds](./docs/jetpack_playgrounds.md):** Detailed information about the specific experiments and features.
-* **[Architecture Overview](https://deepwiki.com/alex-amenos/Jetpack):** Deep dive into the project's architectural decisions.
+* **[Architecture Overview](https://deepwiki.com/alex-amenos/Simple-Radio):** Deep dive into the project's architectural decisions.
 
 ## 🛠️ Tech Stack & Architecture
 
@@ -23,18 +20,18 @@ Built with modern Android development practices in mind:
 * **Testing:** JUnit 5, Turbine, Roborazzi (Screenshot Testing)
 * **Modularization:** Multi-module architecture by feature
 
-## 🧩 Features
+## 🧩 Modules
 
-The app is split into several standalone feature modules for experimentation, including:
-
-* `movies`: TMDB API integration.
-* `location-tracker`: Google Maps SDK integration.
-* `authentication`: Login/Registration UI and flows.
-* `posts`, `file-downloader`, `notifications`, `game`, and more.
+* `app`: Application entry point.
+* `feature:root`: Activity, navigation and feature wiring.
+* `feature:home`: Home screen listing the available features.
+* `feature:radio`: Internet radio station list and streaming player.
+* `feature:settings`: App settings.
+* `shared:api`, `shared:core`, `shared:kotlin`, `shared:testing`: Shared networking, UI/core utilities, Kotlin helpers and test utilities.
 
 ## 🚦 Project Status
 
-![Jetpack - Main status](https://github.com/alex-amenos/Jetpack/actions/workflows/android_ci.yml/badge.svg?branch=main)
+![Simple Radio - Main status](https://github.com/alex-amenos/Simple-Radio/actions/workflows/android_ci.yml/badge.svg?branch=main)
 
 ## 🔗 Useful Links for Development
 
