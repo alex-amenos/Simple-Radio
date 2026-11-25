@@ -4,10 +4,10 @@ import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
 import arrow.retrofit.adapter.either.networkhandling.CallError
-import com.alxnophis.simpleradio.api.jsonplaceholder.model.CallErrorMother
 import com.alxnophis.simpleradio.api.radiobrowser.RadioBrowserSearchService
 import com.alxnophis.simpleradio.api.radiobrowser.model.CountryApiModel
 import com.alxnophis.simpleradio.api.radiobrowser.model.RadioStationApiModel
+import com.alxnophis.simpleradio.api.testing.CallErrorMother
 import com.alxnophis.simpleradio.search.data.model.Country
 import com.alxnophis.simpleradio.search.data.model.SearchError
 import com.alxnophis.simpleradio.search.data.repository.SearchStationsRepositoryImpl

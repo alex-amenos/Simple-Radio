@@ -1,17 +1,7 @@
 apply from: "$rootDir/buildSystem/gradle/common-android-shared.gradle"
 
-def tmdbApiToken = (project.findProperty('THEMOVIEDB_ORG_API_TOKEN') ?: "").toString()
-
 android {
     namespace = 'com.alxnophis.simpleradio.api'
-
-    buildFeatures {
-        buildConfig = true
-    }
-
-    defaultConfig {
-        buildConfigField("String", "THEMOVIEDB_ORG_API_TOKEN", "\"${tmdbApiToken}\"")
-    }
 }
 
 dependencies {
