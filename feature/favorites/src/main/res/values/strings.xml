@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="favorites_title">Favorites</string>
+    <string name="favorites_empty">You have no favorite stations yet</string>
+    <string name="favorites_cd_remove">Remove %s from favorites</string>
+</resources>

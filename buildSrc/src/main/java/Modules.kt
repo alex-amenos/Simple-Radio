@@ -11,6 +11,7 @@ object Modules {
     const val SHARED_TESTING = ":shared:testing"
 
     // Feature modules
+    const val FEATURE_FAVORITES = ":feature:favorites"
     const val FEATURE_HOME = ":feature:home"
     const val FEATURE_RADIO = ":feature:radio"
     const val FEATURE_ROOT = ":feature:root"
