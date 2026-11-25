@@ -6,5 +6,10 @@ import com.alxnophis.jetpack.settings.ui.contract.Theme
 
 internal class SettingsPreviewProvider : PreviewParameterProvider<SettingsUiState> {
     override val values: Sequence<SettingsUiState>
-        get() = Theme.entries.asSequence().map { SettingsUiState(themeOption = it) }
+        get() =
+            sequenceOf(
+                SettingsUiState(
+                    themeOption = Theme.DARK,
+                ),
+            )
 }

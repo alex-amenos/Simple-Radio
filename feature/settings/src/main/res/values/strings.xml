@@ -6,4 +6,6 @@
     <string name="settings_cd_select_theme">Select theme</string>
     <string name="settings_option_theme">Theme</string>
     <string name="settings_app_version">App version</string>
+    <string name="settings_section_appearance">Appearance</string>
+    <string name="settings_section_about">About</string>
 </resources>

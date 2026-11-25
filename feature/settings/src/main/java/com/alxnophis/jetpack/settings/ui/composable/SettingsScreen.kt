@@ -15,10 +15,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.alxnophis.jetpack.core.extensions.getVersion
 import com.alxnophis.jetpack.core.ui.theme.AppTheme
+import com.alxnophis.jetpack.settings.R
 import com.alxnophis.jetpack.settings.ui.contract.SettingsUiEvent
 import com.alxnophis.jetpack.settings.ui.contract.SettingsUiState
 
@@ -41,6 +43,7 @@ internal fun SettingsScreen(
                         .background(MaterialTheme.colorScheme.surface)
                         .verticalScroll(rememberScrollState()),
             ) {
+                SettingsSectionTitle(title = stringResource(R.string.settings_section_appearance))
                 SettingsThemeItem(
                     modifier = Modifier.fillMaxWidth(),
                     selectedTheme = state.themeOption,
@@ -48,14 +51,12 @@ internal fun SettingsScreen(
                         onEvent(SettingsUiEvent.SetTheme(theme))
                     },
                 )
-                SettingsSectionSpacer(
-                    modifier = Modifier.fillMaxWidth(),
-                )
+                HorizontalDivider()
+                SettingsSectionTitle(title = stringResource(R.string.settings_section_about))
                 SettingsAppVersion(
                     modifier = Modifier.fillMaxWidth(),
                     appVersion = appVersion,
                 )
-                HorizontalDivider()
             }
         }
     }
