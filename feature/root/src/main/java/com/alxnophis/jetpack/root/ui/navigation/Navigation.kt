@@ -21,9 +21,9 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.alxnophis.jetpack.favorites.ui.composable.FavoritesFeature
 import com.alxnophis.jetpack.home.ui.composable.HomeFeature
-import com.alxnophis.jetpack.radio.playback.RadioPlayback
-import com.alxnophis.jetpack.radio.ui.composable.RadioPlayerFeature
-import com.alxnophis.jetpack.radio.ui.composable.RadioStationListFeature
+import com.alxnophis.jetpack.radioplayer.playback.RadioPlayback
+import com.alxnophis.jetpack.radioplayer.ui.composable.RadioPlayerFeature
+import com.alxnophis.jetpack.radioplayer.ui.composable.RadioStationListFeature
 import com.alxnophis.jetpack.search.ui.composable.SearchFeature
 import com.alxnophis.jetpack.settings.ui.navigation.SettingsFeature
 import com.alxnophis.jetpack.storage.favorites.model.FavoriteStation

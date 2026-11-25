@@ -2,7 +2,7 @@ package com.alxnophis.jetpack.root.di
 
 import com.alxnophis.jetpack.favorites.di.favoritesModule
 import com.alxnophis.jetpack.home.di.homeModule
-import com.alxnophis.jetpack.radio.di.radioModule
+import com.alxnophis.jetpack.radioplayer.di.radioPlayerModule
 import com.alxnophis.jetpack.search.di.searchModule
 import com.alxnophis.jetpack.settings.di.settingsModule
 import com.alxnophis.jetpack.storage.favorites.di.storageModule
@@ -12,7 +12,7 @@ val featureModules: List<Module> =
     listOf(
         favoritesModule,
         homeModule,
-        radioModule,
+        radioPlayerModule,
         rootModule,
         searchModule,
         settingsModule,
