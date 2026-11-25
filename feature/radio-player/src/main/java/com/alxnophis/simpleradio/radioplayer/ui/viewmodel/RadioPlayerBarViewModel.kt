@@ -32,10 +32,10 @@ internal class RadioPlayerBarViewModel(
     fun handleEvent(event: RadioPlayerBarEvent) {
         when (event) {
             RadioPlayerBarEvent.TogglePlayPause -> {
-                if (player.snapshot.value.status == RadioPlaybackStatus.Playing) {
-                    player.pause()
-                } else {
-                    player.play()
+                when (player.snapshot.value.status) {
+                    RadioPlaybackStatus.Playing -> player.pause()
+                    RadioPlaybackStatus.Error -> player.retry()
+                    else -> player.play()
                 }
             }
 
@@ -50,7 +50,7 @@ internal class RadioPlayerBarViewModel(
     }
 
     private fun RadioPlayerSnapshot.toUiState(): RadioPlayerBarUiState {
-        val hasStation = !stationName.isNullOrBlank()
+        val hasStation = stationId != null || !stationName.isNullOrBlank()
         val isVisible = hasStation && status != RadioPlaybackStatus.Idle
         return RadioPlayerBarUiState(
             isVisible = isVisible,
