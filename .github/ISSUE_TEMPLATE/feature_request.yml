@@ -1,0 +1,29 @@
+name: Feature Request
+description: Suggest an improvement or new capability for the app
+title: "[Feature]: "
+labels: [ "enhancement" ]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / Use Case
+      description: What limitation or annoyance are you trying to solve?
+      placeholder: "I'm frustrated when..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed Solution
+      description: How should this work from a user perspective?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Have you seen this handled well in other Android apps, or tried a workaround?
+    validations:
+      required: false
