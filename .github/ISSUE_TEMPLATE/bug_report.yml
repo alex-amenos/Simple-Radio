@@ -1,0 +1,89 @@
+name: Bug Report
+description: Report a crash, UI glitch, or unexpected behavior in the Android app
+title: "[Bug]: "
+labels: [ "bug", "triage" ]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please fill out the fields below so we can reproduce the issue across Android devices.
+
+  - type: input
+    id: app-version
+    attributes:
+      label: App Version & Build Source
+      description: Found in App Settings > About (e.g., 2.4.1 (420) - Google Play)
+      placeholder: "2.4.1 - Google Play / F-Droid / GitHub APK / Debug"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: android-version
+    attributes:
+      label: Android Version
+      description: Which Android version is running on your device?
+      options:
+        - Android 16 (API 36)
+        - Android 15 (API 35)
+        - Android 14 (API 34)
+        - Android 13 (API 33)
+        - Android 12 / 12L (API 31-32)
+        - Android 11 (API 30)
+        - Android 10 or older (API <= 29)
+    validations:
+      required: true
+
+  - type: input
+    id: device-model
+    attributes:
+      label: Device Manufacturer & Model
+      description: OEM skins (One UI, HyperOS, ColorOS, etc.) often cause vendor-specific bugs.
+      placeholder: "e.g., Google Pixel 8, Samsung Galaxy S24, Xiaomi 14"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the bug clearly, including what you expected to happen instead.
+      placeholder: "The app crashes when tapping..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Numbered steps to trigger the issue reliably.
+      value: |
+        1. Open the app and go to '...'
+        2. Tap on '...'
+        3. Observe crash / error
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logcat / Stack Trace
+      description: Paste any crash log or Logcat output here (automatically formatted as code).
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or Screen Recording
+      description: Drag and drop screenshots or a short video here if applicable.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: I searched existing issues to confirm this has not already been reported.
+          required: true
