@@ -57,6 +57,8 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -366,6 +368,11 @@ private fun ControlsRow(
     uiState: RadioPlayerUiState,
     onAction: (RadioPlayerEvent) -> Unit,
 ) {
+    val haptic = LocalHapticFeedback.current
+    val onHapticAction: (RadioPlayerEvent) -> Unit = { event ->
+        haptic.performHapticFeedback(HapticFeedbackType.ContextClick)
+        onAction(event)
+    }
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(18.dp),
@@ -375,15 +382,15 @@ private fun ControlsRow(
             description = stringResource(R.string.radioplayer_previous),
             size = 68.dp,
             enabled = uiState.canPrevious,
-            onClick = { onAction(RadioPlayerEvent.Previous) },
+            onClick = { onHapticAction(RadioPlayerEvent.Previous) },
         )
-        PlayPauseButton(uiState = uiState, onAction = onAction)
+        PlayPauseButton(uiState = uiState, onAction = onHapticAction)
         RoundControl(
             icon = Icons.Rounded.SkipNext,
             description = stringResource(R.string.radioplayer_next),
             size = 68.dp,
             enabled = uiState.canNext,
-            onClick = { onAction(RadioPlayerEvent.Next) },
+            onClick = { onHapticAction(RadioPlayerEvent.Next) },
         )
     }
 }
@@ -466,6 +473,7 @@ private fun SecondaryRow(
     onStop: () -> Unit,
     onTimer: () -> Unit,
 ) {
+    val haptic = LocalHapticFeedback.current
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(18.dp),
@@ -475,7 +483,10 @@ private fun SecondaryRow(
             description = stringResource(R.string.radioplayer_stop),
             size = 60.dp,
             enabled = uiState.status != RadioPlaybackStatus.Idle,
-            onClick = onStop,
+            onClick = {
+                haptic.performHapticFeedback(HapticFeedbackType.ContextClick)
+                onStop()
+            },
         )
         RoundControl(
             icon = Icons.Rounded.Timer,

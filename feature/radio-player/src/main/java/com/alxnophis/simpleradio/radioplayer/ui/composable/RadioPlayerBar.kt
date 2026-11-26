@@ -22,13 +22,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.androidx.compose.koinViewModel
 import com.alxnophis.simpleradio.core.ui.composable.CoreStationIcon
+import com.alxnophis.simpleradio.core.ui.theme.AppTheme
 import com.alxnophis.simpleradio.radioplayer.R
 import com.alxnophis.simpleradio.radioplayer.playback.RadioPlaybackStatus
 import com.alxnophis.simpleradio.radioplayer.ui.contract.RadioPlayerBarEvent
@@ -113,8 +117,12 @@ internal fun RadioPlayerBar(
                         stringResource(
                             if (isPlaying) R.string.radioplayer_pause else R.string.radioplayer_play,
                         )
+                    val haptic = LocalHapticFeedback.current
                     IconButton(
-                        onClick = onPlayPauseClick,
+                        onClick = {
+                            haptic.performHapticFeedback(HapticFeedbackType.ContextClick)
+                            onPlayPauseClick()
+                        },
                         modifier =
                             Modifier
                                 .size(ACTION_BUTTON_SIZE)
@@ -128,5 +136,23 @@ internal fun RadioPlayerBar(
                 }
             }
         }
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun RadioPlayerBarPreview() {
+    AppTheme {
+        RadioPlayerBar(
+            uiState =
+                RadioPlayerBarUiState(
+                    isVisible = true,
+                    stationName = "Catalunya Ràdio",
+                    artworkUri = null,
+                    status = RadioPlaybackStatus.Playing,
+                ),
+            onOpenPlayer = {},
+            onPlayPauseClick = {},
+        )
     }
 }
