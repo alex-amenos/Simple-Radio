@@ -1,11 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 108 108">
-  <!-- Google Play store icon: full-bleed, no rounding, no shadow, opaque ground -->
-  <rect width="108" height="108" fill="#000000"/>
-  <g fill="none" stroke-width="7.84" stroke-linecap="round">
-    <path d="M22.64 45.60 V62.40" stroke="#1D8756"/>
-    <path d="M38.32 35.52 V72.48" stroke="#35C88C"/>
-    <path d="M54.00 28.80 V79.20" stroke="#62DCA4"/>
-    <path d="M69.68 35.52 V72.48" stroke="#35C88C"/>
-    <path d="M85.36 45.60 V62.40" stroke="#1D8756"/>
+  <rect width="108" height="108" rx="24" fill="#000000"/>
+  <g transform="translate(13.5 13.5) scale(0.75)" fill="none" stroke-width="7.84" stroke-linecap="round">
+    <path d="M22.64,45.60V62.40" stroke="#1D8756"/>
+    <path d="M38.32,35.52V72.48" stroke="#35C88C"/>
+    <path d="M54.00,28.80V79.20" stroke="#62DCA4"/>
+    <path d="M69.68,35.52V72.48" stroke="#35C88C"/>
+    <path d="M85.36,45.60V62.40" stroke="#1D8756"/>
   </g>
 </svg>
