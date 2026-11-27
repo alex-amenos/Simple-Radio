@@ -8,6 +8,7 @@ import com.alxnophis.simpleradio.core.base.provider.NotificationChannelProvider
 import com.alxnophis.simpleradio.core.di.KoinLogger
 import com.alxnophis.simpleradio.core.di.coreModules
 import com.alxnophis.simpleradio.core.extensions.isDebugBuildType
+import com.alxnophis.simpleradio.core.ui.theme.AppNightModeManager
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +25,7 @@ open class BaseApp(
 ) : Application() {
     override fun onCreate() {
         super.onCreate()
+        AppNightModeManager.applySaved(this)
         initKoin()
         initLogger()
         initNotificationChannels()
