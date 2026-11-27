@@ -12,34 +12,53 @@ Simple Radio is a lightweight internet radio app for Android. Search thousands o
 
 ## 📸 Visuals
 
+### Search
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/images/search-default-country.png" width="260" alt="Search screen with the default country"><br><sub>Search with default country</sub></td>
+    <td align="center"><img src="docs/images/search-by-name.png" width="260" alt="Search results for the word jazz"><br><sub>Search by station name</sub></td>
+    <td align="center"><img src="docs/images/country-selector.png" width="260" alt="Country selector screen"><br><sub>Country selector</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/images/country-filter.png" width="260" alt="Country selector filtered by Italy"><br><sub>Country search</sub></td>
+    <td align="center"><img src="docs/images/search-by-country.png" width="260" alt="Search results for jazz in Italy"><br><sub>Results filtered by country</sub></td>
+    <td></td>
+  </tr>
+</table>
+
+### Favorites
+
 <table>
   <tr>
     <td align="center"><img src="docs/images/favorites-dark.png" width="260" alt="Favorites screen in dark theme"><br><sub>Favorites (dark theme)</sub></td>
     <td align="center"><img src="docs/images/favorites-light.png" width="260" alt="Favorites screen in light theme"><br><sub>Favorites (light theme)</sub></td>
+    <td></td>
   </tr>
+</table>
+
+### Player
+
+<table>
   <tr>
-    <td align="center"><img src="docs/images/search-default-country.png" width="260" alt="Search screen with the default country"><br><sub>Search with default country</sub></td>
-    <td align="center"><img src="docs/images/search-by-name.png" width="260" alt="Search results for the word jazz"><br><sub>Search by station name</sub></td>
-  </tr>
-  <tr>
-    <td align="center"><img src="docs/images/country-selector.png" width="260" alt="Country selector screen"><br><sub>Country selector</sub></td>
-    <td align="center"><img src="docs/images/country-filter.png" width="260" alt="Country selector filtered by ital"><br><sub>Country search</sub></td>
-  </tr>
-  <tr>
-    <td align="center"><img src="docs/images/search-by-country.png" width="260" alt="Search results for jazz in Italy"><br><sub>Results filtered by country</sub></td>
     <td align="center"><img src="docs/images/player.png" width="260" alt="Full-screen radio player"><br><sub>Full-screen player</sub></td>
-  </tr>
-  <tr>
     <td align="center"><img src="docs/images/mini-player.png" width="260" alt="Mini player bar above the navigation bar"><br><sub>Mini player bar</sub></td>
-    <td align="center"><img src="docs/images/sleep-timer-menu.png" width="260" alt="Sleep timer options"><br><sub>Sleep timer options</sub></td>
-  </tr>
-  <tr>
-    <td align="center"><img src="docs/images/sleep-timer-active.png" width="260" alt="Player with an active sleep timer"><br><sub>Active sleep timer</sub></td>
-    <td align="center"><img src="docs/images/settings-dark.png" width="260" alt="Settings screen in dark theme"><br><sub>Settings (dark theme)</sub></td>
-  </tr>
-  <tr>
-    <td align="center"><img src="docs/images/settings-light.png" width="260" alt="Settings screen in light theme"><br><sub>Settings (light theme)</sub></td>
     <td align="center"><img src="docs/images/media-notification.png" width="260" alt="Media notification playing LOS40 Classic with its controls"><br><sub>Media notification while playing</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/images/sleep-timer-menu.png" width="260" alt="Sleep timer options"><br><sub>Sleep timer options</sub></td>
+    <td align="center"><img src="docs/images/sleep-timer-active.png" width="260" alt="Player with an active sleep timer"><br><sub>Active sleep timer</sub></td>
+    <td></td>
+  </tr>
+</table>
+
+### Settings
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/images/settings-dark.png" width="260" alt="Settings screen in dark theme"><br><sub>Settings (dark theme)</sub></td>
+    <td align="center"><img src="docs/images/settings-light.png" width="260" alt="Settings screen in light theme"><br><sub>Settings (light theme)</sub></td>
+    <td></td>
   </tr>
 </table>
 
