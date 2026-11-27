@@ -5,4 +5,11 @@
     <style name="Theme.App.PostSplash" parent="CoreTheme">
         <item name="android:windowBackground">#000000</item>
     </style>
+
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#000000</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_dark</item>
+        <item name="windowSplashScreenIconBackgroundColor">#000000</item>
+        <item name="postSplashScreenTheme">@style/Theme.App.PostSplash</item>
+    </style>
 </resources>
