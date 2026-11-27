@@ -78,6 +78,5 @@ private fun SettingsScreenPreview(
 ) {
     SettingsScreen(
         state = uiState,
-        appVersion = "1.0.0",
     )
 }
