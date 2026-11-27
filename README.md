@@ -1,5 +1,9 @@
 # Simple Radio 📻
 
+<p align="center">
+  <img src="docs/images/app-icon.svg" width="128" alt="Simple Radio app icon">
+</p>
+
 [![Android CI](https://github.com/alex-amenos/Simple-Radio/actions/workflows/android_ci.yml/badge.svg?branch=main)](https://github.com/alex-amenos/Simple-Radio/actions/workflows/android_ci.yml)
 ![Kotlin](https://img.shields.io/badge/Kotlin-2.4.20-7F52FF?logo=kotlin&logoColor=white)
 ![Min SDK](https://img.shields.io/badge/minSdk-26-3DDC84?logo=android&logoColor=white)
