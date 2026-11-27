@@ -7,10 +7,13 @@ import androidx.datastore.core.IOException
 import androidx.datastore.dataStore
 import arrow.core.Either
 import arrow.core.Either.Companion.catch
+import com.alxnophis.simpleradio.core.ui.theme.AppNightMode
+import com.alxnophis.simpleradio.core.ui.theme.AppNightModeManager
 import com.alxnophis.simpleradio.settings.data.model.SettingsPreferences
 import com.alxnophis.simpleradio.settings.data.model.SettingsPreferencesError
 import com.alxnophis.simpleradio.settings.data.model.SettingsPreferencesSerializer
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.onEach
 
 internal typealias UpdatedSuccessfully = Unit
 
@@ -45,7 +48,8 @@ internal class SettingsRepositoryImpl(
     private val settingsDataStoreData: Flow<SettingsPreferences>
         get() = context.dataStore.data
 
-    override fun getSettingsFlow(): Flow<SettingsPreferences> = settingsDataStoreData
+    override fun getSettingsFlow(): Flow<SettingsPreferences> =
+        settingsDataStoreData.onEach { AppNightModeManager.save(context, it.themeOption.toAppNightMode()) }
 
     private suspend inline fun updatePreference(
         crossinline update: (SettingsPreferences) -> SettingsPreferences,
@@ -63,6 +67,10 @@ internal class SettingsRepositoryImpl(
     override suspend fun updateThemeOption(themeOption: SettingsPreferences.ThemeOptions): Either<SettingsPreferencesError, Unit> =
         updatePreference {
             it.copy(themeOption = themeOption)
+        }.onRight {
+            val nightMode = themeOption.toAppNightMode()
+            AppNightModeManager.save(context, nightMode)
+            AppNightModeManager.apply(context, nightMode)
         }
 
     override suspend fun updateDefaultCountry(
@@ -76,4 +84,11 @@ internal class SettingsRepositoryImpl(
     companion object {
         private const val SETTINGS_PREFERENCES_FILE_NAME = "settings_preferences"
     }
+
+    private fun SettingsPreferences.ThemeOptions.toAppNightMode(): AppNightMode =
+        when (this) {
+            SettingsPreferences.ThemeOptions.LIGHT -> AppNightMode.LIGHT
+            SettingsPreferences.ThemeOptions.DARK -> AppNightMode.DARK
+            SettingsPreferences.ThemeOptions.SYSTEM -> AppNightMode.SYSTEM
+        }
 }

@@ -74,13 +74,14 @@ The application is structured into three main types of modules to enforce separa
   - Repository interfaces can be `public` to serve as a cross-module API.
 
 ### Style
-- **Line length:** ~150 chars (not strictly enforced for `*.kt`/`*.kts`).
-- **Imports:** No wildcard imports. Group imports alphabetically:
+- **Source of truth:** ktlint rules and editor settings live in `.editorconfig`. Check with `./gradlew ktlintCheck`; do not duplicate rules here.
+- **Line length:** 150 chars (`max_line_length` in `.editorconfig`).
+- **Imports (convention, not enforced by ktlint):** No wildcard imports. Group imports alphabetically:
   1. Android (`android.*`, `androidx.*`)
   2. Third-party (`arrow.*`, `kotlinx.*`, `org.koin.*`, etc.)
   3. Project imports (`com.alxnophis.simpleradio.*`)
-- **Naming:** 
-  - `ktlint_function_naming_ignore_when_annotated_with = Composable`
+- **Naming:**
+  - Function naming rule is exempt for `@Composable` and `@Test` functions (`.editorconfig`).
   - ViewModels: `{Feature}ViewModel`
   - Repositories: `{Feature}Repository` / `{Feature}RepositoryImpl`
   - UseCases: `{Action}{Entity}UseCase`

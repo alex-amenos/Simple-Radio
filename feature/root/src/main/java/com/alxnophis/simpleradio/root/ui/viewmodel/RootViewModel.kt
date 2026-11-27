@@ -28,6 +28,6 @@ internal class RootViewModel(
         }.stateIn(
             scope = viewModelScope,
             initialValue = initialState,
-            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5_000),
+            started = SharingStarted.Eagerly,
         )
 }

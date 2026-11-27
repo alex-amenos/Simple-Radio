@@ -3,8 +3,9 @@ object AppVersion {
     private const val MAJOR = 1
     private const val MINOR = 0
     private const val BUILD = 0
+    private const val PRE_RELEASE = "beta01"
 
-    const val NAME: String = "$MAJOR.$MINOR.$BUILD"
+    const val NAME: String = "$MAJOR.$MINOR.$BUILD-$PRE_RELEASE"
     val CODE = "${MAJOR}${MINOR.format()}${BUILD.format()}".toInt()
 
     private fun Int.format() = "%03d".format(this)
